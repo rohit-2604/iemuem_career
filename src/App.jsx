@@ -1,20 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import "./App.css";
+
+// Only the required components and routes
+import AppRoutes from "./AppRoutes";
+
+// Context providers - FIX: Using consistent import paths matching your structure
+import { DepartmentProvider } from "./contexts/SuperAdmin/DepartmentContext";
+import { LoginProvider } from "./contexts/SuperAdmin/LoginContext";
+import { ErrorPopupProvider } from "./hooks/useHttp";
+
+// React Router
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <p>
-          This is a boilarplate for a React application using Vite.
-        </p>
-      </div>
-    </>
-  )
+    <BrowserRouter>
+      <ErrorPopupProvider>
+        <LoginProvider>
+          <DepartmentProvider>
+            <div className="bg-[#F3F3F3] min-h-screen">
+              {/* FIX: Add error boundary for better error handling */}
+              <React.Suspense fallback={<div>Loading...</div>}>
+                <AppRoutes />
+              </React.Suspense>
+            </div>
+          </DepartmentProvider>
+        </LoginProvider>
+      </ErrorPopupProvider>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
