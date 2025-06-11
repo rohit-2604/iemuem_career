@@ -18,7 +18,7 @@ const [email, setEmail] = useState("")
   }
 
   return (
-    <div className="min-h-screen flex poppins p-4 bg-white">
+    <div className="min-h-screen flex urbanist p-4 bg-white">
       {/* Left Side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 relative rounded-xl overflow-hidden p-4">
         <img
