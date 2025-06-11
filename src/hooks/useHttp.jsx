@@ -1,168 +1,118 @@
-// src/hooks/useHttp.js
-// This is a recommended enhancement for your useHttp hook to prevent parsing errors
+import { createContext, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ErrorPopup } from "../utils/ErrorPopup";
 
-import { createContext, useContext, useState } from 'react';
-
-const ErrorPopupContext = createContext();
-
-export const ErrorPopupProvider = ({ children }) => {
-  const [error, setError] = useState(null);
-
-  return (
-    <ErrorPopupContext.Provider value={{ error, setError }}>
-      {children}
-      {error && (
-        <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-lg z-50">
-          <p>{error}</p>
-          <button 
-            onClick={() => setError(null)}
-            className="ml-2 text-white hover:text-gray-200"
-          >
-            ×
-          </button>
-        </div>
-      )}
-    </ErrorPopupContext.Provider>
-  );
-};
+// Error handling
+const ErrorHandleContext = createContext();
+export const useErrorHandle = () => useContext(ErrorHandleContext);
 
 export const useHttp = () => {
-  const { setError } = useContext(ErrorPopupContext) || {};
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { showErrorPopup } = useErrorHandle();
+  const navigate = useNavigate();
 
-  const postReq = async (endpoint, token = null, body = null) => {
-    try {
-      // Validate endpoint
-      if (!endpoint) {
-        throw new Error('API endpoint is required');
-      }
+  // const mainURL = "http://localhost:5000";
+  // const mainURL = "http://192.168.1.176:5000";
+  // const mainURL = "http://192.168.0.112:5000";
+  const mainURL = "https://api.example.com"; // Replace with your actual API URL
 
-      // Construct full URL
-      const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
-      const url = `${baseURL}${endpoint}`;
-
-      // Prepare headers
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
-      // Add authorization header if token is provided
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      // Prepare request options
-      const options = {
-        method: 'POST',
-        headers,
-      };
-
-      // Add body if provided
-      if (body) {
-        options.body = JSON.stringify(body);
-      }
-
-      console.log('Making request to:', url);
-
-      const response = await fetch(url, options);
-
-      // Check if response is ok
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('HTTP Error:', response.status, errorText);
-        
-        let errorMessage;
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || `HTTP Error: ${response.status}`;
-        } catch {
-          errorMessage = `HTTP Error: ${response.status} - ${response.statusText}`;
-        }
-        
-        throw new Error(errorMessage);
-      }
-
-      // Get response text first
-      const responseText = await response.text();
+  const handleResponse = async (response) => {
+    if ([403, 401].includes(response.status)) {
+      const errorText = await response.text();
+      let errorMessage;
       
-      // Check if response is empty
-      if (!responseText) {
-        console.warn('Empty response received');
-        return { success: false, message: 'Empty response from server' };
-      }
-
-      // Try to parse JSON
-      let data;
       try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('JSON Parse Error:', parseError);
-        console.error('Response text:', responseText);
-        
-        const errorMsg = 'Failed to parse server response. Server may have returned invalid JSON.';
-        if (setError) setError(errorMsg);
-        
-        throw new Error(errorMsg);
+        // Try to parse as JSON to get a structured error message
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.message || `Error ${response.status}: ${response.statusText}`;
+      } catch {
+        // If parsing fails, use the raw text or a default message
+        errorMessage = errorText || `Error ${response.status}: ${response.statusText}`;
       }
-
-      return data;
-
-    } catch (error) {
-      console.error('Request failed:', error);
       
-      // Show error popup if context is available
-      if (setError) {
-        setError(error.message);
-      }
-
-      // Return error object instead of throwing
-      return {
-        success: false,
-        message: error.message,
-        error: true
-      };
+      showErrorPopup(errorMessage);
+      localStorage.clear();
+      navigate("/superadmin/login");
+      return null;
     }
+    return response.json();
   };
 
-  const getReq = async (endpoint, token = null) => {
+  const getReq = async (url, token = "") => {
+    setLoading(true);
+    setError(null);
     try {
-      if (!endpoint) {
-        throw new Error('API endpoint is required');
-      }
-
-      const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
-      const url = `${baseURL}${endpoint}`;
-
-      const headers = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers,
+      const response = await fetch(`${mainURL}/${url}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('HTTP Error:', response.status, errorText);
-        throw new Error(`HTTP Error: ${response.status}`);
-      }
-
-      const responseText = await response.text();
-      
-      if (!responseText) {
-        return { success: false, message: 'Empty response from server' };
-      }
-
-      const data = JSON.parse(responseText);
-      return data;
-
-    } catch (error) {
-      console.error('GET request failed:', error);
-      if (setError) setError(error.message);
-      return { success: false, message: error.message, error: true };
+      return await handleResponse(response);
+    } catch (err) {
+      showErrorPopup(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { postReq, getReq };
+  const postReq = async (url, token = "", data, isFormData = false) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Set up headers based on whether we're sending FormData or JSON
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      
+      // Only add Content-Type for JSON requests
+      // For FormData, let the browser set the appropriate Content-Type with boundary
+      if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+      }
+      
+      const response = await fetch(`${mainURL}/${url}`, {
+        method: "POST",
+        headers: headers,
+        body: isFormData ? data : JSON.stringify(data),
+      });
+      
+      const resData = await handleResponse(response);
+      if (resData && !resData.success) {
+        showErrorPopup(
+          resData?.message ===
+          "Moderator validation failed: phone: Please enter a valid phone number"
+            ? "Invalid phone number!!"
+            : resData?.message || "Please fill out the form accurately."
+        );
+      }
+      return resData;
+    } catch (err) {
+      showErrorPopup(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { getReq, postReq, loading, error, setError };
+};
+
+export const ErrorPopupProvider = ({ children }) => {
+  const [popupMessage, setPopupMessage] = useState(null);
+
+  const showErrorPopup = (message) => {
+    setPopupMessage(message);
+  };
+
+  const closePopup = () => {
+    setPopupMessage(null);
+  };
+
+  return (
+    <ErrorHandleContext.Provider value={{ showErrorPopup }}>
+      {children}
+      {popupMessage && (
+        <ErrorPopup takeData={popupMessage} setPopupShow={closePopup} />
+      )}
+    </ErrorHandleContext.Provider>
+  );
 };
