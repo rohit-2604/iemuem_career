@@ -1,25 +1,62 @@
-import React from 'react'
-import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import background from "../../assets/superadmin/back.png"
-import front from "../../assets/superadmin/front.png"
-import Digilocker from "../../assets/superadmin/digilocker.png"
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import background from "../../assets/superadmin/back.png";
+import front from "../../assets/superadmin/front.png";
+import Digilocker from "../../assets/superadmin/digilocker.png";
+import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
 
 function SuperAdminLogin() {
-const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [keepLoggedIn, setKeepLoggedIn] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Handle form submission logic here
-    console.log({ email, password, keepLoggedIn })
-  }
+  const navigate = useNavigate();
+  const { isLogin, superAdminLogin } = useLogin();
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/superadmin/dashboard");
+    }
+  }, [isLogin, navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    const response = await superAdminLogin(email, password);
+
+    if (!response.success) {
+      setError(response.message);
+    } else {
+      const storage = keepLoggedIn ? localStorage : sessionStorage;
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+
+      if (token) {
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        storage.setItem("token", token);
+      }
+
+      if (role) {
+        localStorage.removeItem("role");
+        sessionStorage.removeItem("role");
+        storage.setItem("role", role);
+      }
+
+      if (response.updatePassword) {
+        navigate("/update-password", { state: { role: "superadmin" } });
+      } else {
+        navigate("/superadmin/dashboard");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen flex urbanist p-4 bg-white">
-      {/* Left Side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 relative rounded-xl overflow-hidden p-4">
         <img
           src={background}
@@ -37,7 +74,6 @@ const [email, setEmail] = useState("")
         </div>
       </div>
 
-      {/* Right Side - Sign In Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
@@ -50,9 +86,8 @@ const [email, setEmail] = useState("")
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-xl font-medium  text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-xl font-medium text-gray-700 mb-1">
                 Email
               </label>
               <input
@@ -66,7 +101,6 @@ const [email, setEmail] = useState("")
               />
             </div>
 
-            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-xl font-medium text-gray-700 mb-1">
                 Password
@@ -95,7 +129,6 @@ const [email, setEmail] = useState("")
               </div>
             </div>
 
-            {/* Checkbox */}
             <div className="flex items-center">
               <input
                 id="keep-logged-in"
@@ -104,12 +137,13 @@ const [email, setEmail] = useState("")
                 onChange={(e) => setKeepLoggedIn(e.target.checked)}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="keep-logged-in" className="ml-2 block text-base text-gray-700">
+              <label htmlFor="keep-logged-in" className="ml-2 block text-base text-black">
                 Keep me logged in
               </label>
             </div>
 
-            {/* Sign In Button */}
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+
             <button
               type="submit"
               className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xl font-medium py-2 px-4 rounded-md transition duration-200"
@@ -117,7 +151,6 @@ const [email, setEmail] = useState("")
               Sign in
             </button>
 
-            {/* OR Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
@@ -127,10 +160,9 @@ const [email, setEmail] = useState("")
               </div>
             </div>
 
-            {/* Digilocker Sign In */}
             <button
               type="button"
-              className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center space-x-2"
+              className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-black font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center space-x-2"
             >
               <span>Sign in with</span>
               <img
@@ -142,7 +174,6 @@ const [email, setEmail] = useState("")
               />
             </button>
 
-            {/* Sign Up Prompt */}
             <div className="text-center">
               <p className="text-base text-gray-600">
                 Need an account?{" "}
@@ -155,9 +186,7 @@ const [email, setEmail] = useState("")
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default SuperAdminLogin
-
-
+export default SuperAdminLogin;
