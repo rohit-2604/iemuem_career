@@ -1,35 +1,22 @@
 import { useState } from "react";
-import { BellDot, Search, Menu } from "lucide-react";
-import Sidebar from "./Sidebar";
-import DepartmentSection from "./DepartmentSection";
-import RecruitmentFormsSection from "./RecruitmentFormsSection";
-import DepartmentHiringChart from "./DepartmentHiringChart";
-import HiringFormDetails from "./HiringFormDetails";
-import HiringStatusTable from "./HiringStatusTable";
-import HiringStatistics from "./HiringStatistics";
+import { BellDot, Search } from "lucide-react";
+import DepartmentSection from "../../Components/superadmin/DepartmentSection";
+import RecruitmentFormsSection from "../../Components/superadmin/RecruitmentFormsSection";
+import DepartmentHiringChart from "../../Components/superadmin/DepartmentHiringChart";
+import HiringFormDetails from "../../Components/superadmin/HiringFormDetails";
+import HiringStatusTable from "../../Components/superadmin/HiringStatusTable";
+import HiringStatistics from "../../Components/superadmin/HiringStatistics";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div className="flex min-h-screen font-inter">
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} />
-
       {/* Main Content */}
       <div className="flex-1 bg-[#f3f4f6]">
-        {/* Toggle Sidebar Button (mobile or top-left for desktop) */}
-        <button
-          className="m-4 p-2 bg-white rounded-md shadow lg:hidden"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          <Menu />
-        </button>
-
         {/* Main Grid */}
         <div className="grid grid-cols-[320px_1fr] h-screen">
-          {/* Left Column (fixed) */}
+          {/* Left Column */}
           <div className="space-y-6 bg-[#f3f4f6] h-full overflow-hidden p-6">
             <div>
               <h1 className="text-xl font-bold text-gray-800">
@@ -53,7 +40,7 @@ export default function Dashboard() {
             <DepartmentHiringChart />
           </div>
 
-          {/* Right Column (scrollable) */}
+          {/* Right Column */}
           <div className="h-full overflow-y-auto bg-white p-6 space-y-6">
             {/* Search + Notification */}
             <div className="flex justify-end items-center">
@@ -75,7 +62,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Main Content */}
+            {/* Main Dashboard Content */}
             <div className="bg-white rounded-lg shadow">
               <HiringFormDetails />
             </div>
