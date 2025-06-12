@@ -1,29 +1,34 @@
 import React from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-// Page components
+// Auth
 import SupAdminSignIn from "./pages/Auth/SuperAdminLogin";
-import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard"; // 🔁 Import dashboard component
+
+// Super Admin pages
+import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard/Dashboard";
+// import Departments from "./pages/SuperAdmin/Departments";
+// import Forms from "./pages/SuperAdmin/Forms";
+// import Notifications from "./pages/SuperAdmin/Notifications";
+// import Settings from "./pages/SuperAdmin/Settings";
 
 function AppRoutes() {
   return (
     <Routes>
-      {/* Redirect root to login */}
-      <Route
-        path="/"
-        element={<Navigate to="/superadmin/login" replace />}
-      />
+      {/* Default redirect to login */}
+      <Route path="/" element={<Navigate to="/superadmin/login" replace />} />
+
+      {/* Auth route */}
+      <Route path="/superadmin/login" element={<SupAdminSignIn />} />
 
       {/* Super Admin routes */}
-      <Route path="/superadmin/login" element={<SupAdminSignIn />} />
-      <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} /> {/* 🔁 New route */}
+      <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} />
+      {/* <Route path="/superadmin/departments" element={<Departments />} />
+      <Route path="/superadmin/forms" element={<Forms />} />
+      <Route path="/superadmin/notifications" element={<Notifications />} />
+      <Route path="/superadmin/settings" element={<Settings />} /> */}
 
-      {/* Catch-all: redirect unknown paths to login */}
-      <Route path="*" element={<Navigate to="/superadmin/login" />} />
+      {/* Catch-all: unknown path -> login */}
+      <Route path="*" element={<Navigate to="/superadmin/login" replace />} />
     </Routes>
   );
 }
