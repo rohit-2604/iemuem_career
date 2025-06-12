@@ -5,21 +5,25 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// Import only what is required for now
+// Page components
 import SupAdminSignIn from "./pages/Auth/SuperAdminLogin";
+import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard"; // 🔁 Import dashboard component
 
 function AppRoutes() {
   return (
     <Routes>
+      {/* Redirect root to login */}
       <Route
         path="/"
         element={<Navigate to="/superadmin/login" replace />}
       />
-      {/* Only the SuperAdmin login route is enabled */}
-      <Route path="/superadmin/login" element={<SupAdminSignIn />} />
 
-      {/* Redirect all other unknown routes to the login */}
-        <Route path="*" element={<Navigate to="/superadmin/login" />} />
+      {/* Super Admin routes */}
+      <Route path="/superadmin/login" element={<SupAdminSignIn />} />
+      <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} /> {/* 🔁 New route */}
+
+      {/* Catch-all: redirect unknown paths to login */}
+      <Route path="*" element={<Navigate to="/superadmin/login" />} />
     </Routes>
   );
 }
