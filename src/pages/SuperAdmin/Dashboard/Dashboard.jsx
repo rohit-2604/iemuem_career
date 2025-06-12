@@ -36,7 +36,15 @@ export default function Dashboard() {
                 Super Admin Dashboard
               </h1>
               <p className="text-sm text-gray-500">
-                Tue, 10 Jun, 2025, 11:30 AM
+                {new Date().toLocaleString("en-IN", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
               </p>
             </div>
 
