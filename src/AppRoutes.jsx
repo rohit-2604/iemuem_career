@@ -1,33 +1,50 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-// Auth
-import SupAdminSignIn from "./pages/Auth/SuperAdminLogin";
+// Layout
+import Layout from "./layouts/Layouts";
 
-// Super Admin pages
-import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard/Dashboard";
-// import Departments from "./pages/SuperAdmin/Departments";
-// import Forms from "./pages/SuperAdmin/Forms";
-// import Notifications from "./pages/SuperAdmin/Notifications";
-// import Settings from "./pages/SuperAdmin/Settings";
+// Auth pages
+import SupAdminSignIn from "./pages/Auth/SuperAdminLogin";
+// import ModeratorLogin from "./pages/Auth/ModeratorLogin";
+// import UserLogin from "./pages/Auth/UserLogin";
+
+// SuperAdmin pages
+import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard";
+
+// Moderator pages
+import ModeratorDashboard from "./pages/Admin/Dashboard";
+
+// User pages
+import UserDashboard from "./pages/User/Dashboard";
 
 function AppRoutes() {
   return (
     <Routes>
-      {/* Default redirect to login */}
+      {/* Default route */}
       <Route path="/" element={<Navigate to="/superadmin/login" replace />} />
 
-      {/* Auth route */}
+      {/* Auth routes */}
       <Route path="/superadmin/login" element={<SupAdminSignIn />} />
+      {/* <Route path="/moderator/login" element={<ModeratorLogin />} /> */}
+      {/* <Route path="/user/login" element={<UserLogin />} /> */}
 
-      {/* Super Admin routes */}
-      <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} />
-      {/* <Route path="/superadmin/departments" element={<Departments />} />
-      <Route path="/superadmin/forms" element={<Forms />} />
-      <Route path="/superadmin/notifications" element={<Notifications />} />
-      <Route path="/superadmin/settings" element={<Settings />} /> */}
+      {/* SuperAdmin routes */}
+      <Route path="/superadmin" element={<Layout />}>
+        <Route path="dashboard" element={<SuperAdminDashboard />} />
+      </Route>
 
-      {/* Catch-all: unknown path -> login */}
+      {/* Moderator routes */}
+      <Route path="/moderator" element={<Layout />}>
+        <Route path="dashboard" element={<ModeratorDashboard />} />
+      </Route>
+
+      {/* User routes */}
+      <Route path="/user" element={<Layout />}>
+        <Route path="dashboard" element={<UserDashboard />} />
+      </Route>
+
+      {/* Catch-all */}
       <Route path="*" element={<Navigate to="/superadmin/login" replace />} />
     </Routes>
   );
