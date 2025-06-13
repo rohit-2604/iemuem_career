@@ -15,9 +15,9 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 bg-[#f3f4f6]">
         {/* Main Grid */}
-        <div className="grid grid-cols-[320px_1fr] h-screen">
+        <div className="grid grid-cols-[320px_1fr] h-full">
           {/* Left Column */}
-          <div className="space-y-6 bg-[#f3f4f6] h-full overflow-hidden p-6">
+          <div className="space-y-6 bg-[#f3f4f6] overflow-hidden p-6">
             <div>
               <h1 className="text-xl font-bold text-gray-800">
                 Super Admin Dashboard
