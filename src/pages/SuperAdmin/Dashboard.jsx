@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { BellDot, Search } from "lucide-react";
-import DepartmentSection from "../../Components/superadmin/DepartmentSection";
-import RecruitmentFormsSection from "../../Components/superadmin/RecruitmentFormsSection";
-import DepartmentHiringChart from "../../Components/superadmin/DepartmentHiringChart";
-import HiringFormDetails from "../../Components/superadmin/HiringFormDetails";
-import HiringStatusTable from "../../Components/superadmin/HiringStatusTable";
-import HiringStatistics from "../../Components/superadmin/HiringStatistics";
+import DepartmentSection from "../../Components/superadmin/dashboard/DepartmentSection";
+import RecruitmentFormsSection from "../../Components/superadmin/dashboard/RecruitmentFormsSection";
+import DepartmentHiringChart from "../../Components/superadmin/dashboard/DepartmentHiringChart";
+import HiringFormDetails from "../../Components/superadmin/dashboard/HiringFormDetails";
+import HiringStatusTable from "../../Components/superadmin/dashboard/HiringStatusTable";
+import HiringStatistics from "../../Components/superadmin/dashboard/HiringStatistics";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");

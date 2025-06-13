@@ -11,6 +11,7 @@ import SupAdminSignIn from "./pages/Auth/SuperAdminLogin";
 
 // SuperAdmin pages
 import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard";
+import SuperAdminForms from "./pages/SuperAdmin/Forms";
 
 // Moderator pages
 import ModeratorDashboard from "./pages/Admin/Dashboard";
@@ -32,6 +33,7 @@ function AppRoutes() {
       {/* SuperAdmin routes */}
       <Route path="/superadmin" element={<Layout />}>
         <Route path="dashboard" element={<SuperAdminDashboard />} />
+        <Route path="forms" element={<SuperAdminForms />} />
       </Route>
 
       {/* Moderator routes */}
