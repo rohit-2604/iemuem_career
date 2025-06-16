@@ -46,7 +46,6 @@ export default function Sidebar({ role = "guest" }) {
       { to: "/user/dashboard", icon: LayoutGrid, label: "Dashboard" },
       { to: "/user/applications", icon: FileText, label: "Applications" },
       { to: "/user/profile", icon: Users, label: "Profile" },
-      // { to: "/user/settings", icon: Settings, label: "Settings" },
     ],
   };
 
@@ -87,9 +86,9 @@ export default function Sidebar({ role = "guest" }) {
         {isOpen && (
           <h3 className="text-xs text-gray-400 mb-2 px-2">Help & Support</h3>
         )}
-        {navLink("#", HelpCircle, "Support", isOpen)}
-        {navLink("#", Shield, "Privacy Policy", isOpen)}
-        {navLink("#", ThumbsUp, "Feedback", isOpen)}
+        {navLink("#support", HelpCircle, "Support", isOpen)}
+        {navLink("#privacy", Shield, "Privacy Policy", isOpen)}
+        {navLink("#feedback", ThumbsUp, "Feedback", isOpen)}
       </div>
 
       {/* Logout */}
@@ -106,12 +105,13 @@ export default function Sidebar({ role = "guest" }) {
   );
 }
 
-// Link helper
+// Link helper with key directly on Link element
 function navLink(to, Icon, label, isOpen, currentPath = "") {
   const isActive = currentPath === to;
 
   return (
     <Link
+      key={to}
       to={to}
       className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
         isActive ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-gray-800"
