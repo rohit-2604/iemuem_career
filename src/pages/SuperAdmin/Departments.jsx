@@ -26,8 +26,8 @@
 
 import { PlusIcon } from "lucide-react";
 import React from "react";
-import SearchBar from "../../Components/superadmin/SearchBar";
-import DepartmentGrid from "../../Components/superadmin/DepartmentGrid";
+import SearchBar from "../../Components/superadmin/department/SearchBar";
+import DepartmentGrid from "../../Components/superadmin/department/DepartmentGrid";
 // import SearchBar from "@/components/search-bar";
 
 export default function DepartmentManagement() {

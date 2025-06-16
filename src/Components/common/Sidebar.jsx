@@ -65,13 +65,14 @@ export default function Sidebar({ role = "guest" }) {
           </div>
         )}
         <button
-          onClick={toggleSidebar}
-          className={`text-white absolute top-4 ${
-            isOpen ? "right-2" : "left-1/2 -translate-x-1/2"
-          }`}
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+  onClick={toggleSidebar}
+  className={`text-white absolute top-4 cursor-pointer ${
+    isOpen ? "right-2" : "left-1/2 -translate-x-1/2"
+  }`}
+>
+  {isOpen ? <X size={20} /> : <Menu size={20} />}
+</button>
+
       </div>
 
       {/* Main navigation */}
