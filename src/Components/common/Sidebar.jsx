@@ -23,10 +23,33 @@ export default function Sidebar({ role = "guest" }) {
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = `/${role}/login`;
-  };
+const handleLogout = () => {
+  // Clear localStorage and sessionStorage
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Clear all cookies (with possible domain variations)
+  document.cookie.split(";").forEach(cookie => {
+    const name = cookie.split("=")[0].trim();
+
+    const domains = [
+      "", // no domain
+      window.location.hostname,
+      `.${window.location.hostname.replace(/^www\./, "")}`,
+    ];
+
+    domains.forEach(domain => {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain};`;
+    });
+
+    // Also clear with no domain (fallback)
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+
+  // Redirect to login page
+  window.location.href = `/${role}/login`;
+};
+
 
   const navItems = {
     superadmin: [

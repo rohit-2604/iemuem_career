@@ -4,7 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import background from "../../assets/superadmin/back.png";
 import front from "../../assets/superadmin/front.png";
 import Digilocker from "../../assets/superadmin/digilocker.png";
-import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
+import { useLogin } from "../../contexts/SuperAdmin/LoginContext"; // ✅ Correct import
 
 function SuperAdminLogin() {
   const [email, setEmail] = useState("");
@@ -31,9 +31,10 @@ function SuperAdminLogin() {
     if (!response.success) {
       setError(response.message);
     } else {
+      // Handle session/local storage
       const storage = keepLoggedIn ? localStorage : sessionStorage;
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const role = localStorage.getItem("role") || sessionStorage.getItem("role");
 
       if (token) {
         localStorage.removeItem("token");
@@ -57,6 +58,7 @@ function SuperAdminLogin() {
 
   return (
     <div className="min-h-screen flex urbanist p-4 bg-white">
+      {/* Left Side: Illustration */}
       <div className="hidden lg:flex lg:w-1/2 relative rounded-xl overflow-hidden p-4">
         <img
           src={background}
@@ -74,6 +76,7 @@ function SuperAdminLogin() {
         </div>
       </div>
 
+      {/* Right Side: Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
