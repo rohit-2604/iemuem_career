@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./layouts/Layouts";
 
 // Auth pages
-import SupAdminSignIn from "./pages/Auth/SuperAdminLogin";
+import SupAdminSignIn from "./pages/SuperAdmin/SuperAdminLogin";
 // import ModeratorLogin from "./pages/Auth/ModeratorLogin";
 // import UserLogin from "./pages/Auth/UserLogin";
 
