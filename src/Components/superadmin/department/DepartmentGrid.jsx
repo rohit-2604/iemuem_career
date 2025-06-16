@@ -10,6 +10,7 @@ export default function DepartmentGrid() {
   useEffect(() => {
     const fetchDepartments = async () => {
       const token = localStorage.getItem("token"); 
+      console.log("Fetching departments with token:", token);
 
       if (!token) {
         console.error("No auth token found in localStorage");

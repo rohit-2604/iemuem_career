@@ -3,32 +3,50 @@ import { useHttp } from "../../hooks/useHttp";
 
 const LoginContext = createContext();
 
-// 🔐 Save token and extra data to both localStorage and sessionStorage
-const setTokenStorage = (token, role, extraData = {}) => {
-  try {
-    console.log("💾 Saving token to storage:", token);
-    localStorage.setItem("token", token);
-    localStorage.setItem("role", role);
-    sessionStorage.setItem("token", token);
-    sessionStorage.setItem("role", role);
+// 🔐 Save token + extra data to storage
+function setTokenStorage(token, roleKey, extraData = {}) {
 
+  try {
+    if (!token || typeof token !== "string") {
+      console.warn("⚠️ Invalid token passed to setTokenStorage:", token);
+      return false;
+    }
+
+    // Local and Session Storage
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", roleKey);
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("role", roleKey);
+
+    // Cookies
+    document.cookie = `token=${encodeURIComponent(token)}; path=/; max-age=${60 * 60 * 24 * 7}`;
+    document.cookie = `role=${encodeURIComponent(roleKey)}; path=/; max-age=${60 * 60 * 24 * 7}`;
+
+    // Extra data
     Object.entries(extraData).forEach(([key, value]) => {
-      if (value) {
-        localStorage.setItem(key, value);
-        sessionStorage.setItem(key, value);
-      }
+      const stringValue = String(value);
+      localStorage.setItem(key, stringValue);
+      sessionStorage.setItem(key, stringValue);
+      document.cookie = `${key}=${encodeURIComponent(stringValue)}; path=/; max-age=${60 * 60 * 24 * 7}`;
     });
 
     return true;
-  } catch (error) {
-    console.error("❌ Failed to save token/data:", error);
+  } catch (err) {
+    console.error("❌ Failed to store authentication data:", err);
     return false;
   }
-};
+}
 
 const getTokenFromStorage = () => {
   try {
-    return localStorage.getItem("token") || sessionStorage.getItem("token") || null;
+    const token =
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("token") ||
+      document.cookie.match(/(^| )token=([^;]+)/)?.[2] ||
+      null;
+
+    console.log("📥 Retrieved token from storage:", token);
+    return token;
   } catch (error) {
     console.error("❌ Failed to get token from storage:", error);
     return null;
@@ -37,7 +55,12 @@ const getTokenFromStorage = () => {
 
 const getRoleFromStorage = () => {
   try {
-    return localStorage.getItem("role") || sessionStorage.getItem("role") || null;
+    return (
+      localStorage.getItem("role") ||
+      sessionStorage.getItem("role") ||
+      document.cookie.match(/(^| )role=([^;]+)/)?.[2] ||
+      null
+    );
   } catch (error) {
     console.error("❌ Failed to get role from storage:", error);
     return null;
@@ -46,10 +69,11 @@ const getRoleFromStorage = () => {
 
 const clearAllStorage = () => {
   try {
-    const authKeys = ['token', 'role', 'department'];
-    authKeys.forEach(key => {
+    const authKeys = ["token", "role", "department"];
+    authKeys.forEach((key) => {
       localStorage.removeItem(key);
       sessionStorage.removeItem(key);
+      document.cookie = `${key}=; path=/; max-age=0`;
     });
     console.log("🧹 Auth storage cleared");
   } catch (error) {
@@ -83,37 +107,51 @@ export const LoginProvider = ({ children }) => {
         return { success: false, message: response?.message || "Login failed" };
       }
 
-      // 🧠 Safely extract token from response
       const raw = response?.data?.data ?? response?.data;
-      console.log("📥 Raw response.data:", raw);
+      console.log("🧩 Extracted raw data:", raw);
 
-      const accessToken = typeof raw === "string"
-        ? raw
-        : raw?.token || raw?.accessToken || raw?.access_token;
+      let accessToken = null;
+      let extraDataSource = {};
+
+      if (typeof raw === "string") {
+        accessToken = raw;
+      } else if (typeof raw === "object" && raw !== null) {
+        accessToken = raw.token || raw.accessToken || raw.access_token;
+        extraDataSource = raw;
+      }
+
+      if (typeof accessToken !== "string") {
+        accessToken = String(accessToken);
+      }
 
       if (!accessToken) {
         console.error("❌ No token found in response:", raw);
         return { success: false, message: "Authentication token not received" };
       }
 
-      // 📦 Extract extra fields to store
+      // 📋 Extract extra fields
       const extraData = {};
-      if (typeof raw === "object" && raw !== null) {
-        Object.entries(extraStorage).forEach(([storageKey, responseKey]) => {
-          const value = raw[responseKey];
-          if (value !== undefined && value !== null) {
-            extraData[storageKey] = String(value);
-          }
-        });
-      }
+      Object.entries(extraStorage).forEach(([storageKey, responseKey]) => {
+        const value = extraDataSource[responseKey];
+        if (value !== undefined && value !== null) {
+          extraData[storageKey] = String(value);
+        }
+      });
 
+      // 💾 Save to storage
       const saved = setTokenStorage(accessToken, roleKey, extraData);
       if (!saved) {
+        console.warn("⚠️ Failed to save token/extra data to storage");
         return { success: false, message: "Failed to store authentication data" };
       }
 
-      setIsLogin(true);
       console.log("✅ Login successful");
+      console.log("🧾 Saved Values:");
+      console.log("LocalStorage:", localStorage.getItem("token"));
+      console.log("SessionStorage:", sessionStorage.getItem("token"));
+      console.log("Cookies:", document.cookie);
+
+      setIsLogin(true);
 
       return {
         success: true,
@@ -125,12 +163,12 @@ export const LoginProvider = ({ children }) => {
       console.error("❌ Login error:", error);
       return {
         success: false,
-        message: error?.response?.data?.message || error.message || "Network error occurred",
+        message:
+          error?.response?.data?.message || error.message || "Network error occurred",
       };
     }
   };
 
-  // 🚪 Role-based login methods
   const superAdminLogin = (email, password) =>
     handleLogin({
       endpoint: "/api/v1/superadmin/login",
@@ -160,7 +198,6 @@ export const LoginProvider = ({ children }) => {
     console.log("🚪 Logging out...");
     clearAllStorage();
     setIsLogin(false);
-
     try {
       localStorage.setItem("logout-event", Date.now().toString());
       localStorage.removeItem("logout-event");
@@ -170,7 +207,6 @@ export const LoginProvider = ({ children }) => {
     }
   };
 
-  // 🌀 Auto-login on refresh
   useEffect(() => {
     const initializeAuth = () => {
       try {
