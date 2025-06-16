@@ -1,45 +1,34 @@
+import { useEffect, useState } from "react";
 import DepartmentCard from "./DepartmentCard";
-import img from "../../../assets/superadmin/department.png"; 
+import img from "../../../assets/superadmin/department.png";
+import { useHttp } from "../../../hooks/useHttp";
 
 export default function DepartmentGrid() {
-  const departments = [
-    {
-      name: "CSE",
-      admin: "Abhirup Ghosh",
-      activeForms: "05",
-      image: {img} // CSE
-    },
-    {
-      name: "ECE",
-      admin: "Riya Sen",
-      activeForms: "03",
-        image: {img}
-    },
-    {
-      name: "ME",
-      admin: "Rahul Verma",
-      activeForms: "04",
-      image: {img}
-    },
-    {
-      name: "CE",
-      admin: "Sneha Das",
-      activeForms: "02",
-      image: "https://source.unsplash.com/featured/?civil,construction", // CE
-    },
-    {
-      name: "EE",
-      admin: "Ankit Sharma",
-      activeForms: "06",
-      image: "https://source.unsplash.com/featured/?electricity,power", // EE
-    },
-    {
-      name: "IT",
-      admin: "Priya Mehta",
-      activeForms: "07",
-      image: "https://source.unsplash.com/featured/?software,code", // IT
-    },
-  ];
+  const { getReq, loading } = useHttp();
+  const [departments, setDepartments] = useState([]);
+useEffect(() => {
+  const fetchDepartments = async () => {
+    // const token = localStorage.getItem("token");
+
+    // if (!token) {
+    //   console.error("No auth token found in localStorage");
+    //   return;
+    // }
+
+    const data = await getReq("/api/v1/department/getAllDepartments");
+
+    if (data?.success && Array.isArray(data.departments)) {
+      setDepartments(data.departments);
+    } else {
+      console.error("Failed to fetch departments:", data?.message || "Unknown error");
+    }
+  };
+
+  fetchDepartments();
+}, [getReq]);
+
+
+  if (loading) return <p>Loading departments...</p>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -49,7 +38,7 @@ export default function DepartmentGrid() {
           name={department.name}
           admin={department.admin}
           activeForms={department.activeForms}
-          image={department.image}
+          image={department.image || img}
         />
       ))}
     </div>
