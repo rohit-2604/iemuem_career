@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHttp } from "../../hooks/useHttp";
+import Cookies from "js-cookie";
 
 const LoginContext = createContext();
 
@@ -17,6 +18,7 @@ export const LoginProvider = ({ children }) => {
   }) => {
     try {
       const response = await postReq(endpoint, null, { email, password });
+      console.log(response.data);
 
       if (!response || !response.success) {
         return {
@@ -94,7 +96,8 @@ export const LoginProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    // Check for token in cookies first, then localStorage, then sessionStorage
+    const token = Cookies.get("token") || localStorage.getItem("token") || sessionStorage.getItem("token");
     if (token) {
       setIsLogin(true);
     }

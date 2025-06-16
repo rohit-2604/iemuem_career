@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/superadmin/iem_logo.png";
+import Cookies from "js-cookie";
 
 import {
   LayoutGrid,
@@ -26,6 +27,9 @@ export default function Sidebar({ role = "guest" }) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = `/${role}/login`;
+        // Clear cookies
+        Cookies.remove("token");
+        Cookies.remove("role");
   };
 
   const navItems = {
