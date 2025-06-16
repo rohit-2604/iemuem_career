@@ -4,7 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import background from "../../assets/superadmin/back.png";
 import front from "../../assets/superadmin/front.png";
 import Digilocker from "../../assets/superadmin/digilocker.png";
-import { useLogin } from "../../contexts/SuperAdmin/LoginContext"; // ✅ Correct import
+import { useLogin } from "../../contexts/SuperAdmin/LoginContext"; 
 
 function SuperAdminLogin() {
   const [email, setEmail] = useState("");
@@ -22,50 +22,44 @@ function SuperAdminLogin() {
     }
   }, [isLogin, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError(null);
 
-    const response = await superAdminLogin(email, password);
+  const response = await superAdminLogin(email, password);
 
-    if (!response.success) {
-      setError(response.message);
-    } else {
-      // Handle session/local storage
-      const storage = keepLoggedIn ? localStorage : sessionStorage;
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      const role = localStorage.getItem("role") || sessionStorage.getItem("role");
+  if (!response.success) {
+    setError(response.message);
+  } else {
+    const token = response.data?.token;  
+    const role = response.data?.role || "superadmin"; 
 
-      if (token) {
-        localStorage.removeItem("token");
-        sessionStorage.removeItem("token");
-        if (keepLoggedIn) {
-          // Store in cookies with 1 days expiry
-          Cookies.set("token", token, { expires: 1 });
-          sessionStorage.setItem("token", token);
-          localStorage.setItem("token", token);
-        }
-      }
+    if (token) {
+      // Clear old data
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+      localStorage.removeItem("role");
+      sessionStorage.removeItem("role");
 
-      if (role) {
-        localStorage.removeItem("role");
-        sessionStorage.removeItem("role");
-        if (keepLoggedIn) {
-          // Store role in cookies with 1 days expiry
-          Cookies.set("role", role, { expires: 1 });
-          sessionStorage.setItem("role", role);
-          localStorage.setItem("role", role);
-        }
-      }
-
-      if (response.updatePassword) {
-        navigate("/update-password", { state: { role: "superadmin" } });
+      // Save new data
+      if (keepLoggedIn) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
+        Cookies.set("token", token, { expires: 1 });
+        Cookies.set("role", role, { expires: 1 });
       } else {
-        navigate("/superadmin/dashboard");
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("role", role);
       }
     }
-  };
 
+    if (response.updatePassword) {
+      navigate("/update-password", { state: { role: "superadmin" } });
+    } else {
+      navigate("/superadmin/dashboard");
+    }
+  }
+};
   return (
     <div className="min-h-screen flex urbanist p-4 bg-white">
       {/* Left Side: Illustration */}
