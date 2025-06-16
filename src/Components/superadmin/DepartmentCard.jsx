@@ -1,3 +1,5 @@
+import { FiEdit3 } from "react-icons/fi";
+
 export default function DepartmentCard({ name, admin, activeForms, image }) {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
@@ -18,7 +20,8 @@ export default function DepartmentCard({ name, admin, activeForms, image }) {
             <span className="font-medium">Admin:</span> {admin}
           </p>
           <button className="flex items-center gap-1 bg-black text-white text-xs px-2 py-1 rounded-md">
-            ✏️ Change
+            <FiEdit3 /> 
+             Change
           </button>
         </div>
         <p className="text-sm text-gray-700 mb-4">
