@@ -12,9 +12,8 @@ export const useHttp = () => {
   const { showErrorPopup } = useErrorHandle();
   const navigate = useNavigate();
 
-  const mainURL = "http://localhost:5000"; // Make sure this does not end with a slash
+  const mainURL = "http://localhost:5000";
 
-  // Normalize URL to avoid "//" issues
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
     return `${mainURL}/${trimmedPath}`;
@@ -39,65 +38,60 @@ export const useHttp = () => {
     }
 
     try {
-      return await response.json();
+      const json = await response.json();
+      return {
+        success: json.success ?? true, // assume success if not explicitly false
+        message: json.message,
+        data: json, // normalize: everything goes under `data`
+      };
     } catch {
       showErrorPopup("Invalid response format from server.");
       return null;
     }
   };
 
-  const getReq = async (url, token = "") => {
+  const request = async ({ url, method = "GET", token = "", data = null, isFormData = false }) => {
     setLoading(true);
     setError(null);
-    try {
-      const response = await fetch(buildUrl(url), {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return await handleResponse(response);
-    } catch (err) {
-      showErrorPopup(err.message || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const postReq = async (url, token = "", data, isFormData = false) => {
-    setLoading(true);
-    setError(null);
     try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
+      const headers = {};
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      if (!isFormData && method !== "GET") headers["Content-Type"] = "application/json";
+
+      const options = {
+        method,
+        headers,
       };
 
-      if (!isFormData) {
-        headers["Content-Type"] = "application/json";
+      if (method !== "GET" && data) {
+        options.body = isFormData ? data : JSON.stringify(data);
       }
 
-      const response = await fetch(buildUrl(url), {
-        method: "POST",
-        headers: headers,
-        body: isFormData ? data : JSON.stringify(data),
-      });
-
+      const response = await fetch(buildUrl(url), options);
       const resData = await handleResponse(response);
 
       if (resData && !resData.success) {
         const message =
-          resData?.message ===
+          resData.data?.message ===
           "Moderator validation failed: phone: Please enter a valid phone number"
             ? "Invalid phone number!!"
-            : resData?.message || "Please fill out the form accurately.";
+            : resData.data?.message || "Please fill out the form accurately.";
         showErrorPopup(message);
       }
 
       return resData;
     } catch (err) {
       showErrorPopup(err.message || "An unexpected error occurred");
+      return null;
     } finally {
       setLoading(false);
     }
   };
+
+  const getReq = (url, token = "") => request({ url, method: "GET", token });
+  const postReq = (url, token = "", data = {}, isFormData = false) =>
+    request({ url, method: "POST", token, data, isFormData });
 
   return { getReq, postReq, loading, error, setError };
 };
