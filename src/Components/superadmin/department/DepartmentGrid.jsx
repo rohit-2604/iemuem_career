@@ -9,29 +9,32 @@ export default function DepartmentGrid() {
 
   useEffect(() => {
     const fetchDepartments = async () => {
-      const token = localStorage.getItem("token"); 
-      console.log("Fetching departments with token:", token);
+      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+      console.log("📦 Fetched token:", token);
 
       if (!token) {
-        console.error("No auth token found in localStorage");
+        console.error("❌ No auth token found");
         return;
       }
 
-      const data = await getReq("api/v1/department/getAllDepartments", {
+      const res = await getReq("api/v1/department/getAllDepartments", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (data?.success && Array.isArray(data.data?.departments)) {
-        setDepartments(data.data.departments);
+      console.log("📥 Full department response:", res);
+
+      if (res?.success && Array.isArray(res?.data?.departments)) {
+        setDepartments(res.data.departments);
       } else {
-        console.error("Failed to fetch departments:", data?.message || "Unknown error");
+        console.error("❌ Failed to fetch departments:", res?.message || "Unknown error");
       }
     };
 
     fetchDepartments();
-  },[]);
+  }, []);
 
   if (loading) return <p>Loading departments...</p>;
 

@@ -8,7 +8,6 @@ const ErrorHandleContext = createContext();
 // Custom hook to use the error handler
 export const useErrorHandle = () => useContext(ErrorHandleContext);
 
-// Custom hook for HTTP requests
 export const useHttp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,7 +15,6 @@ export const useHttp = () => {
   const navigate = useNavigate();
 
   const mainURL = "http://localhost:5000";
-  // const mainURL = "http://192.168.1.60:5000"; // Alternate backend
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
@@ -54,23 +52,29 @@ export const useHttp = () => {
     }
   };
 
-  const request = async ({ url, method = "GET", token = "", data = null, isFormData = false }) => {
+  const request = async ({
+    url,
+    method = "GET",
+    token = "",
+    headers = {},
+    data = null,
+    isFormData = false,
+  }) => {
     setLoading(true);
     setError(null);
 
     try {
-      const headers = {};
-
-      // Token fallback from localStorage
+      // Fallback to token from localStorage or sessionStorage
       if (!token) {
-        token = localStorage.getItem("token") || "";
+        token = localStorage.getItem("token") || sessionStorage.getItem("token") || "";
+      }
+
+      if (typeof token !== "string") {
+        console.warn("⚠️ Invalid token type. Expected string but got:", typeof token, token);
+        token = token?.token || "";
       }
 
       if (token) {
-        if (typeof token !== "string") {
-          console.warn("⚠️ Invalid token type. Expected string but got:", typeof token, token);
-          token = token.token || "";
-        }
         headers["Authorization"] = `Bearer ${token}`;
       }
 
@@ -86,6 +90,11 @@ export const useHttp = () => {
       if (method !== "GET" && data) {
         options.body = isFormData ? data : JSON.stringify(data);
       }
+
+      console.log("📡 Sending HTTP request:", {
+        url: buildUrl(url),
+        ...options,
+      });
 
       const response = await fetch(buildUrl(url), options);
       const resData = await handleResponse(response);
@@ -109,10 +118,12 @@ export const useHttp = () => {
     }
   };
 
-  // GET and POST wrapper
-  const getReq = (url, token = "") => request({ url, method: "GET", token });
-  const postReq = (url, token = "", data = {}, isFormData = false) =>
-    request({ url, method: "POST", token, data, isFormData });
+  // ✅ Updated to support flexible options object
+  const getReq = (url, options = {}) =>
+    request({ url, method: "GET", ...options });
+
+  const postReq = (url, options = {}) =>
+    request({ url, method: "POST", ...options });
 
   return { getReq, postReq, loading, error, setError };
 };
