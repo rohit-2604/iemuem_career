@@ -18,6 +18,7 @@ import ModeratorDashboard from "./pages/Admin/Dashboard";
 
 // User pages
 import UserDashboard from "./pages/User/Dashboard";
+import Departments from "./pages/SuperAdmin/Departments";
 
 function AppRoutes() {
   return (
@@ -33,6 +34,7 @@ function AppRoutes() {
       {/* SuperAdmin routes */}
       <Route path="/superadmin" element={<Layout />}>
         <Route path="dashboard" element={<SuperAdminDashboard />} />
+        <Route path="departments" element={<Departments />} />
         <Route path="forms" element={<SuperAdminForms />} />
       </Route>
 
