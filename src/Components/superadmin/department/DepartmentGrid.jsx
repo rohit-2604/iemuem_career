@@ -1,5 +1,5 @@
 import DepartmentCard from "./DepartmentCard";
-import img from "../../assets/superadmin/department.png"; 
+import img from "../../../assets/superadmin/department.png"; 
 
 export default function DepartmentGrid() {
   const departments = [
