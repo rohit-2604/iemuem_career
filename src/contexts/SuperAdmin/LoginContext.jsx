@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHttp } from "../../hooks/useHttp";
+import Cookies from "js-cookie";
 
 const LoginContext = createContext();
 
@@ -80,6 +81,7 @@ export const LoginProvider = ({ children }) => {
       console.log(`🔐 Logging in as ${roleKey}...`);
 
       const response = await postReq(endpoint, null, { email, password });
+      console.log(response.data);
 
       if (!response || !response.success) {
         return {

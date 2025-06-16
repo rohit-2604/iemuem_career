@@ -12,7 +12,8 @@ export const useHttp = () => {
   const { showErrorPopup } = useErrorHandle();
   const navigate = useNavigate();
 
-  const mainURL = "http://localhost:5000";
+  // const mainURL = "http://192.168.1.171:5000";
+  const mainURL = "http://192.168.1.60:5000"; //Rahul's backend
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;

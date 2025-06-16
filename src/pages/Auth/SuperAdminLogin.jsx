@@ -39,13 +39,23 @@ function SuperAdminLogin() {
       if (token) {
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
-        storage.setItem("token", token);
+        if (keepLoggedIn) {
+          // Store in cookies with 1 days expiry
+          Cookies.set("token", token, { expires: 1 });
+          sessionStorage.setItem("token", token);
+          localStorage.setItem("token", token);
+        }
       }
 
       if (role) {
         localStorage.removeItem("role");
         sessionStorage.removeItem("role");
-        storage.setItem("role", role);
+        if (keepLoggedIn) {
+          // Store role in cookies with 1 days expiry
+          Cookies.set("role", role, { expires: 1 });
+          sessionStorage.setItem("role", role);
+          localStorage.setItem("role", role);
+        }
       }
 
       if (response.updatePassword) {
@@ -154,7 +164,7 @@ function SuperAdminLogin() {
               Sign in
             </button>
 
-            <div className="relative">
+            {/* <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
@@ -175,7 +185,7 @@ function SuperAdminLogin() {
                 style={{ width: "80px", height: "20px" }}
                 loading="lazy"
               />
-            </button>
+            </button> */}
 
             <div className="text-center">
               <p className="text-base text-gray-600">
