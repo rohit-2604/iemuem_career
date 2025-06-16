@@ -6,27 +6,31 @@ import { useHttp } from "../../../hooks/useHttp";
 export default function DepartmentGrid() {
   const { getReq, loading } = useHttp();
   const [departments, setDepartments] = useState([]);
-useEffect(() => {
-  const fetchDepartments = async () => {
-    // const token = localStorage.getItem("token");
 
-    // if (!token) {
-    //   console.error("No auth token found in localStorage");
-    //   return;
-    // }
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      const token = localStorage.getItem("token"); 
 
-    const data = await getReq("/api/v1/department/getAllDepartments");
+      if (!token) {
+        console.error("No auth token found in localStorage");
+        return;
+      }
 
-    if (data?.success && Array.isArray(data.departments)) {
-      setDepartments(data.departments);
-    } else {
-      console.error("Failed to fetch departments:", data?.message || "Unknown error");
-    }
-  };
+      const data = await getReq("api/v1/department/getAllDepartments", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  fetchDepartments();
-}, [getReq]);
+      if (data?.success && Array.isArray(data.data?.departments)) {
+        setDepartments(data.data.departments);
+      } else {
+        console.error("Failed to fetch departments:", data?.message || "Unknown error");
+      }
+    };
 
+    fetchDepartments();
+  },[]);
 
   if (loading) return <p>Loading departments...</p>;
 

@@ -1,72 +1,65 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHttp } from "../../hooks/useHttp";
-import Cookies from "js-cookie";
 
 const LoginContext = createContext();
 
-// Utility: Save token and user data
+// 🔐 Save token and extra data to both localStorage and sessionStorage
 const setTokenStorage = (token, role, extraData = {}) => {
   try {
+    console.log("💾 Saving token to storage:", token);
     localStorage.setItem("token", token);
     localStorage.setItem("role", role);
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", role);
 
-    // Set cookie for 1 day
-    const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString();
-    const cookieOptions = `; expires=${expirationDate}; path=/; secure; samesite=strict`;
-
-    document.cookie = `token=${token}${cookieOptions}`;
-    document.cookie = `role=${role}${cookieOptions}`;
-
-    for (const [key, value] of Object.entries(extraData)) {
+    Object.entries(extraData).forEach(([key, value]) => {
       if (value) {
         localStorage.setItem(key, value);
         sessionStorage.setItem(key, value);
-        document.cookie = `${key}=${value}${cookieOptions}`;
       }
-    }
+    });
 
-    console.log("✅ Token and data saved to all storage methods");
     return true;
   } catch (error) {
-    console.error("❌ Error saving to storage:", error);
+    console.error("❌ Failed to save token/data:", error);
     return false;
   }
 };
 
-
-// Utility: Read token from localStorage, sessionStorage, or cookie
 const getTokenFromStorage = () => {
-  return (
-    localStorage.getItem("token") ||
-    sessionStorage.getItem("token") ||
-    (() => {
-      const tokenMatch = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
-      return tokenMatch ? tokenMatch[1] : null;
-    })()
-  );
+  try {
+    return localStorage.getItem("token") || sessionStorage.getItem("token") || null;
+  } catch (error) {
+    console.error("❌ Failed to get token from storage:", error);
+    return null;
+  }
 };
 
-// Clear all storage and cookies on logout
-function clearAllStorage() {
-  // Clear localStorage and sessionStorage
-  localStorage.clear();
-  sessionStorage.clear();
+const getRoleFromStorage = () => {
+  try {
+    return localStorage.getItem("role") || sessionStorage.getItem("role") || null;
+  } catch (error) {
+    console.error("❌ Failed to get role from storage:", error);
+    return null;
+  }
+};
 
-  // Clear all cookies
-  document.cookie.split(";").forEach(cookie => {
-    const name = cookie.split("=")[0].trim();
-    if (name) {
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname};`;
-    }
-  });
-}
+const clearAllStorage = () => {
+  try {
+    const authKeys = ['token', 'role', 'department'];
+    authKeys.forEach(key => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+    console.log("🧹 Auth storage cleared");
+  } catch (error) {
+    console.error("❌ Failed to clear storage:", error);
+  }
+};
 
 export const LoginProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { postReq } = useHttp();
 
   const handleLogin = async ({
@@ -75,92 +68,75 @@ export const LoginProvider = ({ children }) => {
     password,
     roleKey,
     extraStorage = {},
-    requireToken = true,
   }) => {
     try {
       console.log(`🔐 Logging in as ${roleKey}...`);
 
+      if (!email || !password) {
+        return { success: false, message: "Email and password are required" };
+      }
+
       const response = await postReq(endpoint, null, { email, password });
-      console.log(response.data);
+      console.log("📦 Full login response:", response);
 
-      if (!response || !response.success) {
-        return {
-          success: false,
-          message: response?.message || "Login failed",
-        };
+      if (!response?.success) {
+        return { success: false, message: response?.message || "Login failed" };
       }
 
-      // Try all possible token paths
-      const possibleTokenPaths = [
-        response.data?.accessToken,
-        response.data?.token,
-        response.data?.access_token,
-        response.data?.authToken,
-        response.data?.jwt,
-        response.data?.bearerToken,
-        response.data?.data?.accessToken,
-        response.data?.data?.token,
-        response.data?.data?.access_token,
-        response.data?.user?.token,
-        response.data?.user?.accessToken,
-        response.data?.auth?.token,
-        response.data?.auth?.accessToken,
-        response.data?.authentication?.token,
-        response.data?.authentication?.accessToken,
-        response.token,
-        response.accessToken,
-        response.jwt,
-      ];
+      // 🧠 Safely extract token from response
+      const raw = response?.data?.data ?? response?.data;
+      console.log("📥 Raw response.data:", raw);
 
-      let accessToken = possibleTokenPaths.find((t) => typeof t === "string");
+      const accessToken = typeof raw === "string"
+        ? raw
+        : raw?.token || raw?.accessToken || raw?.access_token;
 
-      if (!accessToken && !requireToken) {
-        accessToken = `${roleKey}-dummy-token-${Date.now()}`;
-        console.warn(`⚠️ No token from server. Using dummy token: ${accessToken}`);
+      if (!accessToken) {
+        console.error("❌ No token found in response:", raw);
+        return { success: false, message: "Authentication token not received" };
       }
 
-      if (requireToken && !accessToken) {
-        return {
-          success: false,
-          message: "Token not found in server response",
-        };
-      }
-
+      // 📦 Extract extra fields to store
       const extraData = {};
-      for (const [key, valueKey] of Object.entries(extraStorage)) {
-        extraData[key] = response.data?.[valueKey] || response[valueKey];
+      if (typeof raw === "object" && raw !== null) {
+        Object.entries(extraStorage).forEach(([storageKey, responseKey]) => {
+          const value = raw[responseKey];
+          if (value !== undefined && value !== null) {
+            extraData[storageKey] = String(value);
+          }
+        });
       }
 
       const saved = setTokenStorage(accessToken, roleKey, extraData);
-
       if (!saved) {
-        return { success: false, message: "Failed to save authentication data" };
+        return { success: false, message: "Failed to store authentication data" };
       }
 
       setIsLogin(true);
+      console.log("✅ Login successful");
 
       return {
         success: true,
         token: accessToken,
         role: roleKey,
-        updatePassword: response.data?.updatePassword || false,
+        data: extraData,
       };
     } catch (error) {
       console.error("❌ Login error:", error);
       return {
         success: false,
-        message: error.message || "Login failed",
+        message: error?.response?.data?.message || error.message || "Network error occurred",
       };
     }
   };
 
+  // 🚪 Role-based login methods
   const superAdminLogin = (email, password) =>
     handleLogin({
       endpoint: "/api/v1/superadmin/login",
       email,
       password,
       roleKey: "superadmin",
-      requireToken: false,
     });
 
   const deptLogin = (email, password) =>
@@ -181,47 +157,56 @@ export const LoginProvider = ({ children }) => {
     });
 
   const logout = () => {
-    console.log("🚪 Starting logout process...");
-    
-    // Clear all storage
+    console.log("🚪 Logging out...");
     clearAllStorage();
-    
-    // Update login state
     setIsLogin(false);
-    
-    // Broadcast logout to other tabs
+
     try {
       localStorage.setItem("logout-event", Date.now().toString());
-      console.log("📢 Logout event broadcasted to other tabs");
-    } catch (error) {
-      console.warn("⚠️ Could not broadcast logout event:", error);
+      localStorage.removeItem("logout-event");
+      console.log("📢 Logout event broadcasted");
+    } catch (err) {
+      console.warn("⚠️ Failed to broadcast logout:", err);
     }
-    
-    console.log("✅ Logout completed");
   };
 
+  // 🌀 Auto-login on refresh
   useEffect(() => {
-    const token = getTokenFromStorage();
-    const role = localStorage.getItem("role") || sessionStorage.getItem("role");
+    const initializeAuth = () => {
+      try {
+        const token = getTokenFromStorage();
+        const role = getRoleFromStorage();
 
-    if (token && role) {
-      setIsLogin(true);
-      console.log("✅ Auth session restored");
-    } else {
-      console.log("ℹ️ No auth session found");
-    }
+        if (token && role) {
+          setIsLogin(true);
+          console.log("✅ Session restored for role:", role);
+        } else {
+          console.log("ℹ️ No active session found");
+          clearAllStorage();
+        }
+      } catch (error) {
+        console.error("❌ Failed to initialize auth:", error);
+        clearAllStorage();
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const syncLogout = (e) => {
+    initializeAuth();
+
+    const handleStorageChange = (e) => {
       if (e.key === "logout-event") {
-        console.log("📣 Logout detected in another tab");
+        console.log("📣 Logout detected from another tab");
         clearAllStorage();
         setIsLogin(false);
       }
     };
 
-    window.addEventListener("storage", syncLogout);
-    return () => window.removeEventListener("storage", syncLogout);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+
+  if (isLoading) return null;
 
   return (
     <LoginContext.Provider
@@ -233,6 +218,8 @@ export const LoginProvider = ({ children }) => {
         modLogin,
         logout,
         getTokenFromStorage,
+        getRoleFromStorage,
+        isLoading,
       }}
     >
       {children}
@@ -243,7 +230,7 @@ export const LoginProvider = ({ children }) => {
 export const useLogin = () => {
   const context = useContext(LoginContext);
   if (!context) {
-    throw new error("useLogin must be used within a LoginProvider");
+    throw new Error("useLogin must be used within a LoginProvider");
   }
   return context;
 };
