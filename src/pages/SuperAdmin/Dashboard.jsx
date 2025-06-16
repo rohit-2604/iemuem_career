@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { BellDot, Search } from "lucide-react";
-import DepartmentSection from "../../Components/superadmin/DepartmentSection";
-import RecruitmentFormsSection from "../../Components/superadmin/RecruitmentFormsSection";
-import DepartmentHiringChart from "../../Components/superadmin/DepartmentHiringChart";
-import HiringFormDetails from "../../Components/superadmin/HiringFormDetails";
-import HiringStatusTable from "../../Components/superadmin/HiringStatusTable";
-import HiringStatistics from "../../Components/superadmin/HiringStatistics";
+import DepartmentSection from "../../Components/superadmin/dashboard/DepartmentSection";
+import RecruitmentFormsSection from "../../Components/superadmin/dashboard/RecruitmentFormsSection";
+import DepartmentHiringChart from "../../Components/superadmin/dashboard/DepartmentHiringChart";
+import HiringFormDetails from "../../Components/superadmin/dashboard/HiringFormDetails";
+import HiringStatusTable from "../../Components/superadmin/dashboard/HiringStatusTable";
+import HiringStatistics from "../../Components/superadmin/dashboard/HiringStatistics";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,9 +15,9 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 bg-[#f3f4f6]">
         {/* Main Grid */}
-        <div className="grid grid-cols-[320px_1fr] h-screen">
+        <div className="grid grid-cols-[320px_1fr] h-full">
           {/* Left Column */}
-          <div className="space-y-6 bg-[#f3f4f6] h-full overflow-hidden p-6">
+          <div className="space-y-6 bg-[#f3f4f6] overflow-hidden p-6">
             <div>
               <h1 className="text-xl font-bold text-gray-800">
                 Super Admin Dashboard

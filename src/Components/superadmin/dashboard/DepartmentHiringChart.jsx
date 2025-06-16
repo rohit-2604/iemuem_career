@@ -71,26 +71,26 @@ export default function DepartmentHiringChart() {
   }, []);
 
   return (
-    <div className=" rounded-lg bg-white shadow-sm p-2">
+    <div className=" rounded-lg bg-white shadow-sm p-4 h-full">
       <div className="mb-4">
-        <h2 className="text-md text-[#656575] font-medium">Department wise hiring</h2>
+        <h2 className="text-lg text-[#656575] font-medium">Department wise hiring</h2>
       </div>
       <div className="flex flex-col items-center">
         <div ref={chartRef} className="w-full h-[180px] flex items-center justify-center" />
-        <div className="grid grid-cols-1 gap-2 w-full mt-4">
+        <div className="grid grid-cols-1 gap-2 w-full mt-10">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-[#4ade80]" />
-            <span className="text-sm">CSE</span>
+            <span className="text-lg">CSE</span>
             <span className="ml-auto text-sm font-medium">54%</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-[#3b82f6]" />
-            <span className="text-sm">BCA/MCA</span>
+            <span className="text-lg">BCA/MCA</span>
             <span className="ml-auto text-sm font-medium">20%</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-[#06b6d4]" />
-            <span className="text-sm">CSE AI & ML</span>
+            <span className="text-lg">CSE AI & ML</span>
             <span className="ml-auto text-sm font-medium">26%</span>
           </div>
         </div>
