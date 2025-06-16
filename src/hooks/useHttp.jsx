@@ -12,7 +12,8 @@ export const useHttp = () => {
   const { showErrorPopup } = useErrorHandle();
   const navigate = useNavigate();
 
-  const mainURL = "http://192.168.1.171:5000"; // Make sure this does not end with a slash
+  // const mainURL = "http://192.168.1.171:5000"; // Make sure this does not end with a slash
+  const mainURL = "http://192.168.1.60:5000"; //Rahul's backend
 
   // Normalize URL to avoid "//" issues
   const buildUrl = (path) => {

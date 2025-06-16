@@ -26,6 +26,7 @@ export default function Sidebar({ role = "guest" }) {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     window.location.href = `/${role}/login`;
         // Clear cookies
         Cookies.remove("token");

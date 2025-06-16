@@ -38,6 +38,8 @@ export const LoginProvider = ({ children }) => {
 
       if (accessToken) {
         localStorage.setItem("token", accessToken);
+        sessionStorage.setItem("token", accessToken);
+        Cookies.set("token", accessToken, { expires: 1 });
       }
 
       localStorage.setItem("role", roleKey);
