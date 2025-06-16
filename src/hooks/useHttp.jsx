@@ -2,18 +2,21 @@ import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ErrorPopup } from "../utils/ErrorPopup";
 
-// Error Context
+// Create Context for error handling
 const ErrorHandleContext = createContext();
+
+// Custom hook to use the error handler
 export const useErrorHandle = () => useContext(ErrorHandleContext);
 
+// Custom hook for HTTP requests
 export const useHttp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { showErrorPopup } = useErrorHandle();
   const navigate = useNavigate();
 
-  // const mainURL = "http://192.168.1.171:5000";
-  const mainURL = "http://192.168.1.60:5000"; //Rahul's backend
+  const mainURL = "http://localhost:5000";
+  // const mainURL = "http://192.168.1.60:5000"; // Alternate backend
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
@@ -41,9 +44,9 @@ export const useHttp = () => {
     try {
       const json = await response.json();
       return {
-        success: json.success ?? true, // assume success if not explicitly false
+        success: json.success ?? true,
         message: json.message,
-        data: json, // normalize: everything goes under `data`
+        data: json,
       };
     } catch {
       showErrorPopup("Invalid response format from server.");
@@ -57,8 +60,23 @@ export const useHttp = () => {
 
     try {
       const headers = {};
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      if (!isFormData && method !== "GET") headers["Content-Type"] = "application/json";
+
+      // Token fallback from localStorage
+      if (!token) {
+        token = localStorage.getItem("token") || "";
+      }
+
+      if (token) {
+        if (typeof token !== "string") {
+          console.warn("⚠️ Invalid token type. Expected string but got:", typeof token, token);
+          token = token.token || "";
+        }
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      if (!isFormData && method !== "GET") {
+        headers["Content-Type"] = "application/json";
+      }
 
       const options = {
         method,
@@ -73,11 +91,12 @@ export const useHttp = () => {
       const resData = await handleResponse(response);
 
       if (resData && !resData.success) {
+        const msg = resData.data?.message;
         const message =
-          resData.data?.message ===
+          msg ===
           "Moderator validation failed: phone: Please enter a valid phone number"
             ? "Invalid phone number!!"
-            : resData.data?.message || "Please fill out the form accurately.";
+            : msg || "Please fill out the form accurately.";
         showErrorPopup(message);
       }
 
@@ -90,6 +109,7 @@ export const useHttp = () => {
     }
   };
 
+  // GET and POST wrapper
   const getReq = (url, token = "") => request({ url, method: "GET", token });
   const postReq = (url, token = "", data = {}, isFormData = false) =>
     request({ url, method: "POST", token, data, isFormData });
@@ -97,7 +117,7 @@ export const useHttp = () => {
   return { getReq, postReq, loading, error, setError };
 };
 
-// ErrorPopup Provider
+// ErrorPopup context provider
 export const ErrorPopupProvider = ({ children }) => {
   const [popupMessage, setPopupMessage] = useState(null);
 
