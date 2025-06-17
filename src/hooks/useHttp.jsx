@@ -5,14 +5,13 @@ import { ErrorPopup } from "../utils/ErrorPopup";
 // Create Context for error handling
 const ErrorHandleContext = createContext();
 
-// Custom hook to use the error handler
+// Hook to use the error handler
 export const useErrorHandle = () => useContext(ErrorHandleContext);
 
-// Custom hook for HTTP requests
 export const useHttp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { showErrorPopup } = useErrorHandle();
+  const { showErrorPopup } = useErrorHandle() || {};
   const navigate = useNavigate();
 
   const mainURL = "http://192.168.1.171:5000";  //Rohit's Backend
@@ -35,8 +34,9 @@ export const useHttp = () => {
         errorMessage = errorText || `Error ${response.status}: ${response.statusText}`;
       }
 
-      showErrorPopup(errorMessage);
+      showErrorPopup?.(errorMessage);
       localStorage.clear();
+      sessionStorage.clear();
       navigate("/superadmin/login");
       return null;
     }
@@ -46,75 +46,71 @@ export const useHttp = () => {
       return {
         success: json.success ?? true,
         message: json.message,
-        data: json,
+        data: json.data ?? json,
       };
     } catch {
-      showErrorPopup("Invalid response format from server.");
+      showErrorPopup?.("Invalid response format from server.");
       return null;
     }
   };
 
-  const request = async ({ url, method = "GET", token = "", data = null, isFormData = false }) => {
+  const request = async ({
+    url,
+    method = "GET",
+    token = "",
+    headers = {},
+    data = null,
+    isFormData = false,
+  }) => {
     setLoading(true);
     setError(null);
 
     try {
-      const headers = {};
+      token = token || localStorage.getItem("token") || sessionStorage.getItem("token") || "";
 
-      // Token fallback from localStorage
-      if (!token) {
-        token = localStorage.getItem("token") || "";
+      if (typeof token !== "string") {
+        console.warn("⚠️ Invalid token format:", typeof token, token);
+        token = typeof token === "object" && token?.token ? token.token : "";
       }
 
-      if (token) {
-        if (typeof token !== "string") {
-          console.warn("⚠️ Invalid token type. Expected string but got:", typeof token, token);
-          token = token.token || "";
-        }
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      if (!isFormData && method !== "GET") {
-        headers["Content-Type"] = "application/json";
-      }
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      if (!isFormData && method !== "GET") headers["Content-Type"] = "application/json";
 
       const options = {
         method,
         headers,
+        ...(method !== "GET" && data
+          ? { body: isFormData ? data : JSON.stringify(data) }
+          : {}),
       };
 
-      if (method !== "GET" && data) {
-        options.body = isFormData ? data : JSON.stringify(data);
-      }
-
+      console.log("📡 Sending HTTP request:", buildUrl(url), options);
       const response = await fetch(buildUrl(url), options);
       const resData = await handleResponse(response);
 
       if (resData && !resData.success) {
-        const msg = resData.data?.message;
-        const message =
-          msg ===
-          "Moderator validation failed: phone: Please enter a valid phone number"
-            ? "Invalid phone number!!"
-            : msg || "Please fill out the form accurately.";
-        showErrorPopup(message);
+        const message = resData.data?.message?.includes("phone")
+          ? "Invalid phone number!!"
+          : resData.data?.message || "Please fill out the form accurately.";
+        showErrorPopup?.(message);
       }
 
       return resData;
     } catch (err) {
-      showErrorPopup(err.message || "An unexpected error occurred");
+      showErrorPopup?.(err.message || "An unexpected error occurred");
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  // GET and POST wrapper
-  const getReq = (url, token = "") => request({ url, method: "GET", token });
-  const postReq = (url, token = "", data = {}, isFormData = false) =>
-    request({ url, method: "POST", token, data, isFormData });
-
-  return { getReq, postReq, loading, error, setError };
+  return {
+    getReq: (url, options = {}) => request({ url, method: "GET", ...options }),
+    postReq: (url, options = {}) => request({ url, method: "POST", ...options }),
+    loading,
+    error,
+    setError,
+  };
 };
 
 // ErrorPopup context provider

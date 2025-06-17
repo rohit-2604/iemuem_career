@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import Cookies from "js-cookie";
 import background from "../../assets/superadmin/back.png";
 import front from "../../assets/superadmin/front.png";
-import Digilocker from "../../assets/superadmin/digilocker.png";
-import { useLogin } from "../../contexts/SuperAdmin/LoginContext"; 
+import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
 
 function SuperAdminLogin() {
   const [email, setEmail] = useState("");
@@ -29,40 +29,47 @@ const handleSubmit = async (e) => {
   const response = await superAdminLogin(email, password);
 
   if (!response.success) {
-    setError(response.message);
-  } else {
-    const token = response.data?.token;  
-    const role = response.data?.role || "superadmin"; 
+    setError(response.message || "Login failed");
+    return;
+  }
 
-    if (token) {
-      // Clear old data
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
-      localStorage.removeItem("role");
-      sessionStorage.removeItem("role");
+  const token = response.token;
+  const role = response.role || "superadmin";
 
-      // Save new data
-      if (keepLoggedIn) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", role);
-        Cookies.set("token", token, { expires: 1 });
-        Cookies.set("role", role, { expires: 1 });
-      } else {
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("role", role);
-      }
-    }
+  if (token) {
+    // 🔄 Clear previous tokens
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("role");
+    sessionStorage.removeItem("role");
+    Cookies.remove("token");
+    Cookies.remove("role");
 
-    if (response.updatePassword) {
-      navigate("/update-password", { state: { role: "superadmin" } });
-    } else {
-      navigate("/superadmin/dashboard");
+    // 💾 Always save to localStorage and sessionStorage
+    localStorage.setItem("token", token);
+    sessionStorage.setItem("token", token);
+    localStorage.setItem("role", role);
+    sessionStorage.setItem("role", role);
+
+    // 🍪 Save in cookies only if keepLoggedIn is true
+    if (keepLoggedIn) {
+      Cookies.set("token", token, { expires: 1 }); // 1 day expiry
+      Cookies.set("role", role, { expires: 1 });
     }
   }
+
+  // 🔁 Navigate based on password update requirement
+  if (response.updatePassword) {
+    navigate("/update-password", { state: { role: "superadmin" } });
+  } else {
+    navigate("/superadmin/dashboard");
+  }
 };
+
+
   return (
     <div className="min-h-screen flex urbanist p-4 bg-white">
-      {/* Left Side: Illustration */}
+      {/* Left Side */}
       <div className="hidden lg:flex lg:w-1/2 relative rounded-xl overflow-hidden p-4">
         <img
           src={background}
@@ -80,14 +87,14 @@ const handleSubmit = async (e) => {
         </div>
       </div>
 
-      {/* Right Side: Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50 urbanist">
+      {/* Right Side */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900">
-              <span className="text-[#367AFF]">Super Admin</span> Sign in
+              <span className="text-blue-500">Super Admin</span> Sign in
             </h1>
-            <p className="mt-2 text-base text-[#969696] inter">
+            <p className="mt-2 text-base text-gray-600">
               Please enter your credentials to access the dashboard.
             </p>
           </div>
@@ -158,33 +165,10 @@ const handleSubmit = async (e) => {
               Sign in
             </button>
 
-            {/* <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-50 text-gray-500">or</span>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-black font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center space-x-2"
-            >
-              <span>Sign in with</span>
-              <img
-                src={Digilocker}
-                alt="Digilocker Logo"
-                className="h-5"
-                style={{ width: "80px", height: "20px" }}
-                loading="lazy"
-              />
-            </button> */}
-
-            <div className="text-center inter">
-              <p className="text-base text-[#6C6C6C]">
+            <div className="text-center">
+              <p className="text-base text-gray-600">
                 Need an account?{" "}
-                <a href="#" className="text-[#367AFF] hover:text-blue-600 font-medium text-base">
+                <a href="#" className="text-blue-500 hover:text-blue-600 font-medium">
                   Create one
                 </a>
               </p>
