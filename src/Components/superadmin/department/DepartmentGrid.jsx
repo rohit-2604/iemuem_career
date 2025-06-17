@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DepartmentCard from "./DepartmentCard";
-import img from "../../../assets/superadmin/department.png";
+import fallbackImage from "../../../assets/superadmin/department.png";
 import { useHttp } from "../../../hooks/useHttp";
 
 export default function DepartmentGrid() {
@@ -11,25 +11,25 @@ export default function DepartmentGrid() {
     const fetchDepartments = async () => {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
-      console.log("📦 Fetched token:", token);
-
       if (!token) {
-        console.error("❌ No auth token found");
+        console.error("❌ No auth token found.");
         return;
       }
 
-      const res = await getReq("api/v1/department/getAllDepartments", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      try {
+        const response = await getReq("api/v1/department/getAllDepartments", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      console.log("📥 Full department response:", res);
-
-      if (res?.success && Array.isArray(res?.data?.departments)) {
-        setDepartments(res.data.departments);
-      } else {
-        console.error("❌ Failed to fetch departments:", res?.message || "Unknown error");
+        if (response?.success && Array.isArray(response?.data?.departments)) {
+          setDepartments(response.data.departments);
+        } else {
+          console.error("❌ Failed to fetch departments:", response?.message || "Unknown error");
+        }
+      } catch (err) {
+        console.error("❌ Error while fetching departments:", err);
       }
     };
 
@@ -38,15 +38,17 @@ export default function DepartmentGrid() {
 
   if (loading) return <p>Loading departments...</p>;
 
+  if (!departments.length) return <p>No departments found.</p>;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {departments.map((department, index) => (
         <DepartmentCard
-          key={index}
+          key={department._id || index}
           name={department.name}
           admin={department.admin}
           activeForms={department.activeForms}
-          image={department.image || img}
+          image={department.image || fallbackImage}
         />
       ))}
     </div>

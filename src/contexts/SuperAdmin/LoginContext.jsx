@@ -3,53 +3,24 @@ import { useHttp } from "../../hooks/useHttp";
 
 const LoginContext = createContext();
 
-// 🔐 Save token + extra data to storage
-function setTokenStorage(token, roleKey, extraData = {}) {
-
+const saveRoleAndExtras = (roleKey, extraData = {}) => {
   try {
-    if (!token || typeof token !== "string") {
-      console.warn("⚠️ Invalid token passed to setTokenStorage:", token);
-      return false;
-    }
-
-    // Local and Session Storage
-    localStorage.setItem("token", token);
+    // Store role and additional data
     localStorage.setItem("role", roleKey);
-    sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", roleKey);
-
-    // Cookies
-    document.cookie = `token=${encodeURIComponent(token)}; path=/; max-age=${60 * 60 * 24 * 7}`;
     document.cookie = `role=${encodeURIComponent(roleKey)}; path=/; max-age=${60 * 60 * 24 * 7}`;
 
-    // Extra data
     Object.entries(extraData).forEach(([key, value]) => {
-      const stringValue = String(value);
-      localStorage.setItem(key, stringValue);
-      sessionStorage.setItem(key, stringValue);
-      document.cookie = `${key}=${encodeURIComponent(stringValue)}; path=/; max-age=${60 * 60 * 24 * 7}`;
+      const val = String(value);
+      localStorage.setItem(key, val);
+      sessionStorage.setItem(key, val);
+      document.cookie = `${key}=${encodeURIComponent(val)}; path=/; max-age=${60 * 60 * 24 * 7}`;
     });
 
     return true;
   } catch (err) {
-    console.error("❌ Failed to store authentication data:", err);
+    console.error("❌ Failed to store role/extra data:", err);
     return false;
-  }
-}
-
-const getTokenFromStorage = () => {
-  try {
-    const token =
-      localStorage.getItem("token") ||
-      sessionStorage.getItem("token") ||
-      document.cookie.match(/(^| )token=([^;]+)/)?.[2] ||
-      null;
-
-    console.log("📥 Retrieved token from storage:", token);
-    return token;
-  } catch (error) {
-    console.error("❌ Failed to get token from storage:", error);
-    return null;
   }
 };
 
@@ -69,13 +40,13 @@ const getRoleFromStorage = () => {
 
 const clearAllStorage = () => {
   try {
-    const authKeys = ["token", "role", "department"];
-    authKeys.forEach((key) => {
+    const keys = ["role", "department"];
+    keys.forEach((key) => {
       localStorage.removeItem(key);
       sessionStorage.removeItem(key);
       document.cookie = `${key}=; path=/; max-age=0`;
     });
-    console.log("🧹 Auth storage cleared");
+    console.log("🧹 Cleared auth data (no token)");
   } catch (error) {
     console.error("❌ Failed to clear storage:", error);
   }
@@ -100,62 +71,35 @@ export const LoginProvider = ({ children }) => {
         return { success: false, message: "Email and password are required" };
       }
 
-      const response = await postReq(endpoint, null, { email, password });
-      console.log("📦 Full login response:", response);
+      const response = await postReq(endpoint, {
+        data: { email, password },
+      });
 
       if (!response?.success) {
         return { success: false, message: response?.message || "Login failed" };
       }
 
-      const raw = response?.data?.data ?? response?.data;
-      console.log("🧩 Extracted raw data:", raw);
+      const raw = response?.data?.data ?? response?.data ?? {};
+      console.log("📦 Raw login response:", raw);
 
-      let accessToken = null;
-      let extraDataSource = {};
-
-      if (typeof raw === "string") {
-        accessToken = raw;
-      } else if (typeof raw === "object" && raw !== null) {
-        accessToken = raw.token || raw.accessToken || raw.access_token;
-        extraDataSource = raw;
-      }
-
-      if (typeof accessToken !== "string") {
-        accessToken = String(accessToken);
-      }
-
-      if (!accessToken) {
-        console.error("❌ No token found in response:", raw);
-        return { success: false, message: "Authentication token not received" };
-      }
-
-      // 📋 Extract extra fields
       const extraData = {};
       Object.entries(extraStorage).forEach(([storageKey, responseKey]) => {
-        const value = extraDataSource[responseKey];
+        const value = raw[responseKey];
         if (value !== undefined && value !== null) {
           extraData[storageKey] = String(value);
         }
       });
 
-      // 💾 Save to storage
-      const saved = setTokenStorage(accessToken, roleKey, extraData);
+      const saved = saveRoleAndExtras(roleKey, extraData);
       if (!saved) {
-        console.warn("⚠️ Failed to save token/extra data to storage");
-        return { success: false, message: "Failed to store authentication data" };
+        return { success: false, message: "Failed to store session data" };
       }
 
-      console.log("✅ Login successful");
-      console.log("🧾 Saved Values:");
-      console.log("LocalStorage:", localStorage.getItem("token"));
-      console.log("SessionStorage:", sessionStorage.getItem("token"));
-      console.log("Cookies:", document.cookie);
-
+      console.log("✅ Login successful (no token)");
       setIsLogin(true);
 
       return {
         success: true,
-        token: accessToken,
         role: roleKey,
         data: extraData,
       };
@@ -201,38 +145,34 @@ export const LoginProvider = ({ children }) => {
     try {
       localStorage.setItem("logout-event", Date.now().toString());
       localStorage.removeItem("logout-event");
-      console.log("📢 Logout event broadcasted");
     } catch (err) {
       console.warn("⚠️ Failed to broadcast logout:", err);
     }
   };
 
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeSession = () => {
       try {
-        const token = getTokenFromStorage();
         const role = getRoleFromStorage();
-
-        if (token && role) {
+        if (role) {
           setIsLogin(true);
           console.log("✅ Session restored for role:", role);
         } else {
-          console.log("ℹ️ No active session found");
           clearAllStorage();
         }
-      } catch (error) {
-        console.error("❌ Failed to initialize auth:", error);
+      } catch (err) {
+        console.error("❌ Session initialization failed:", err);
         clearAllStorage();
       } finally {
         setIsLoading(false);
       }
     };
 
-    initializeAuth();
+    initializeSession();
 
     const handleStorageChange = (e) => {
       if (e.key === "logout-event") {
-        console.log("📣 Logout detected from another tab");
+        console.log("📣 Detected logout from another tab");
         clearAllStorage();
         setIsLogin(false);
       }
@@ -253,7 +193,6 @@ export const LoginProvider = ({ children }) => {
         deptLogin,
         modLogin,
         logout,
-        getTokenFromStorage,
         getRoleFromStorage,
         isLoading,
       }}
