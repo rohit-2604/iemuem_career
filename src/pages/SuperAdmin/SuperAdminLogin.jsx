@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import Cookies from "js-cookie"; // ✅ FIXED: Missing import
+import Cookies from "js-cookie";
 import background from "../../assets/superadmin/back.png";
 import front from "../../assets/superadmin/front.png";
 import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
@@ -33,21 +33,24 @@ function SuperAdminLogin() {
       return;
     }
 
-    const token = response.data?.token;
-    const role = response.data?.role || "superadmin";
+    const token = response.token;
+    const role = response.role || "superadmin";
 
-    // Clear existing storage
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    localStorage.removeItem("role");
-    sessionStorage.removeItem("role");
-
-    // Save new token and role
     if (token) {
+      // 🔄 Clear previous tokens
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+      localStorage.removeItem("role");
+      sessionStorage.removeItem("role");
+      Cookies.remove("token");
+      Cookies.remove("role");
+
+      // 💾 Save new tokens based on preference
       if (keepLoggedIn) {
         localStorage.setItem("token", token);
+        sessionStorage.setItem("token", token);
         localStorage.setItem("role", role);
-        Cookies.set("token", token, { expires: 1 });
+        Cookies.set("token", token, { expires: 1 }); // expires in 1 day
         Cookies.set("role", role, { expires: 1 });
       } else {
         sessionStorage.setItem("token", token);
@@ -55,6 +58,7 @@ function SuperAdminLogin() {
       }
     }
 
+    // 🔁 Navigate conditionally
     if (response.updatePassword) {
       navigate("/update-password", { state: { role: "superadmin" } });
     } else {

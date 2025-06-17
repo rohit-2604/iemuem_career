@@ -7,7 +7,7 @@ import Layout from "./layouts/Layouts";
 // Auth pages
 import SupAdminSignIn from "./pages/SuperAdmin/SuperAdminLogin";
 // import ModeratorLogin from "./pages/Auth/ModeratorLogin";
-// import UserLogin from "./pages/Auth/UserLogin";
+import UserLogin from "./pages/User/userLogin";
 
 // SuperAdmin pages
 import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard";
@@ -29,7 +29,7 @@ function AppRoutes() {
       {/* Auth routes */}
       <Route path="/superadmin/login" element={<SupAdminSignIn />} />
       {/* <Route path="/moderator/login" element={<ModeratorLogin />} /> */}
-      {/* <Route path="/user/login" element={<UserLogin />} /> */}
+      <Route path="/user/login" element={<UserLogin />} />
 
       {/* SuperAdmin routes */}
       <Route path="/superadmin" element={<Layout />}>
