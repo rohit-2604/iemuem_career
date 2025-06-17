@@ -14,7 +14,7 @@ export const useHttp = () => {
   const { showErrorPopup } = useErrorHandle() || {};
   const navigate = useNavigate();
 
-  const mainURL = "http://localhost:5000";
+  const mainURL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
