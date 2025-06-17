@@ -105,7 +105,8 @@ export const useHttp = () => {
 
   return {
     getReq: (url, options = {}) => request({ url, method: "GET", ...options }),
-    postReq: (url, options = {}) => request({ url, method: "POST", ...options }),
+    postReq: (url, data, token = "", headers = {}) =>
+    request({ url, method: "POST", data, token, headers }),
     loading,
     error,
     setError,

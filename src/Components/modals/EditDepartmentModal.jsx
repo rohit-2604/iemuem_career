@@ -30,7 +30,7 @@ export default function EditDepartmentModal({ isOpen, onClose, department }) {
   </div>
   <button
     onClick={onClose}
-    className="h-6 w-6 text-gray-500 hover:text-gray-700"
+    className="h-6 w-6 text-gray-500 hover:text-white hover:bg-red-500 rounded "
     aria-label="Close"
   >
     ✕
