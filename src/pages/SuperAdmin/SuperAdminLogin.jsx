@@ -22,49 +22,50 @@ function SuperAdminLogin() {
     }
   }, [isLogin, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError(null);
 
-    const response = await superAdminLogin(email, password);
+  const response = await superAdminLogin(email, password);
 
-    if (!response.success) {
-      setError(response.message || "Login failed");
-      return;
+  if (!response.success) {
+    setError(response.message || "Login failed");
+    return;
+  }
+
+  const token = response.token;
+  const role = response.role || "superadmin";
+
+  if (token) {
+    // 🔄 Clear previous tokens
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("role");
+    sessionStorage.removeItem("role");
+    Cookies.remove("token");
+    Cookies.remove("role");
+
+    // 💾 Always save to localStorage and sessionStorage
+    localStorage.setItem("token", token);
+    sessionStorage.setItem("token", token);
+    localStorage.setItem("role", role);
+    sessionStorage.setItem("role", role);
+
+    // 🍪 Save in cookies only if keepLoggedIn is true
+    if (keepLoggedIn) {
+      Cookies.set("token", token, { expires: 1 }); // 1 day expiry
+      Cookies.set("role", role, { expires: 1 });
     }
+  }
 
-    const token = response.token;
-    const role = response.role || "superadmin";
+  // 🔁 Navigate based on password update requirement
+  if (response.updatePassword) {
+    navigate("/update-password", { state: { role: "superadmin" } });
+  } else {
+    navigate("/superadmin/dashboard");
+  }
+};
 
-    if (token) {
-      // 🔄 Clear previous tokens
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
-      localStorage.removeItem("role");
-      sessionStorage.removeItem("role");
-      Cookies.remove("token");
-      Cookies.remove("role");
-
-      // 💾 Save new tokens based on preference
-      if (keepLoggedIn) {
-        localStorage.setItem("token", token);
-        sessionStorage.setItem("token", token);
-        localStorage.setItem("role", role);
-        Cookies.set("token", token, { expires: 1 }); // expires in 1 day
-        Cookies.set("role", role, { expires: 1 });
-      } else {
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("role", role);
-      }
-    }
-
-    // 🔁 Navigate conditionally
-    if (response.updatePassword) {
-      navigate("/update-password", { state: { role: "superadmin" } });
-    } else {
-      navigate("/superadmin/dashboard");
-    }
-  };
 
   return (
     <div className="min-h-screen flex urbanist p-4 bg-white">
