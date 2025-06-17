@@ -68,12 +68,12 @@ function userLogin() {
     return (
         <div className='"bg-[#f3f3f3] h-screen flex items-center justify-center px-[100px]'>
             <div className='w-1/2'>
-                <img src={bgImage} alt="" className='w-full h-full object-cover' />
+                <img src={bgImage} alt="Illustration" className='w-full h-full object-cover' loading="lazy" />
             </div>
-            <div className='w-1/2 bg-white rounded-3xl'>
-                <div className='w-full h-full flex flex-col items-center justify-center p-[100px] rounded-xl shadow-xl urbanist'>
+            <div className='w-1/2 bg-white rounded-2xl shadow-2xl'>
+                <div className='w-full h-full flex flex-col items-center justify-center p-[100px] urbanist'>
                     <h1 className="text-4xl font-bold text-gray-900">
-                        <span className="text-[#367AFF]">Sign in to</span>  IEM Recruit Hub
+                       Sign in to <span className="text-[#367AFF]">IEM Recruit Hub</span>  
                     </h1>
                     <p className="mt-2 text-base text-[#969696] inter">
                         Log in to track your job applications or apply for new positions.
@@ -129,7 +129,7 @@ function userLogin() {
                                 onChange={(e) => setKeepLoggedIn(e.target.checked)}
                                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             />
-                            <label htmlFor="keep-logged-in" className="ml-2 block text-base text-black">
+                            <label htmlFor="keep-logged-in" className="ml-2 block text-base text-[#232323] inter">
                                 Keep me logged in
                             </label>
                         </div>

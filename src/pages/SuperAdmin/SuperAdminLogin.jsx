@@ -144,7 +144,7 @@ const handleSubmit = async (e) => {
                 onChange={(e) => setKeepLoggedIn(e.target.checked)}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="keep-logged-in" className="ml-2 block text-base text-black">
+              <label htmlFor="keep-logged-in" className="ml-2 block text-base text-[#232323] inter">
                 Keep me logged in
               </label>
             </div>
