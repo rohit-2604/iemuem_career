@@ -81,13 +81,13 @@ const handleSubmit = async (e) => {
       </div>
 
       {/* Right Side: Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50 urbanist">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900">
-              <span className="text-blue-500">Super Admin</span> Sign in
+              <span className="text-[#367AFF]">Super Admin</span> Sign in
             </h1>
-            <p className="mt-2 text-base text-gray-600">
+            <p className="mt-2 text-base text-[#969696] inter">
               Please enter your credentials to access the dashboard.
             </p>
           </div>
@@ -181,10 +181,10 @@ const handleSubmit = async (e) => {
               />
             </button> */}
 
-            <div className="text-center">
-              <p className="text-base text-gray-600">
+            <div className="text-center inter">
+              <p className="text-base text-[#6C6C6C]">
                 Need an account?{" "}
-                <a href="#" className="text-blue-500 hover:text-blue-600 font-medium text-base">
+                <a href="#" className="text-[#367AFF] hover:text-blue-600 font-medium text-base">
                   Create one
                 </a>
               </p>

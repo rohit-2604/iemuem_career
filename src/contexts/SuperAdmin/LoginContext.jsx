@@ -194,6 +194,14 @@ export const LoginProvider = ({ children }) => {
       roleKey: "moderator",
     });
 
+    const userLogin = (email, password) =>
+      handleLogin({
+        endpoint: "/api/v1/user/login",
+        email,
+        password,
+        roleKey: "user",
+      });
+
   const logout = () => {
     console.log("🚪 Logging out...");
     clearAllStorage();
