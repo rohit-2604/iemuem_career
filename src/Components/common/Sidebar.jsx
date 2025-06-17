@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/superadmin/iem_logo.png";
 import Cookies from "js-cookie";
-
 import {
   LayoutGrid,
   Building2,
@@ -14,7 +13,6 @@ import {
   ThumbsUp,
   LogOut,
   Menu,
-  X,
   Users,
 } from "lucide-react";
 
@@ -24,33 +22,25 @@ export default function Sidebar({ role = "guest" }) {
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
-const handleLogout = () => {
-  // Clear localStorage and sessionStorage
-  localStorage.clear();
-  sessionStorage.clear();
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
 
-  // Clear all cookies (with possible domain variations)
-  document.cookie.split(";").forEach(cookie => {
-    const name = cookie.split("=")[0].trim();
-
-    const domains = [
-      "", // no domain
-      window.location.hostname,
-      `.${window.location.hostname.replace(/^www\./, "")}`,
-    ];
-
-    domains.forEach(domain => {
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain};`;
+    document.cookie.split(";").forEach(cookie => {
+      const name = cookie.split("=")[0].trim();
+      const domains = [
+        "",
+        window.location.hostname,
+        `.${window.location.hostname.replace(/^www\./, "")}`,
+      ];
+      domains.forEach(domain => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain};`;
+      });
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     });
 
-    // Also clear with no domain (fallback)
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-  });
-
-  // Redirect to login page
-  window.location.href = `/${role}/login`;
-};
-
+    window.location.href = `/${role}/login`;
+  };
 
   const navItems = {
     superadmin: [
@@ -77,36 +67,39 @@ const handleLogout = () => {
 
   return (
     <div
-      className={`${
-        isOpen ? "w-[220px]" : "w-[72px]"
-      } bg-black text-white flex flex-col h-screen sticky top-0 transition-all duration-300`}
-    >
-      {/* Header with logo and toggle */}
-      <div className="relative p-4">
-        {isOpen && (
-          <div className="w-40 h-14 mb-4 mx-auto flex items-center justify-center">
-            <img src={logo} alt="IEM Logo" className="object-contain" />
-          </div>
-        )}
-        <button
-  onClick={toggleSidebar}
-  className={`text-white absolute top-4 cursor-pointer ${
-    isOpen ? "right-2" : "left-1/2 -translate-x-1/2"
-  }`}
+  className={`relative ${
+    isOpen ? "w-[220px]" : "w-[72px]"
+  } bg-black text-white flex flex-col h-screen sticky top-0 transition-all duration-300`}
 >
-  {isOpen ? <X size={20} /> : <Menu size={20} />}
-</button>
+  {/* Toggle Button with Conditional Position */}
+  <div
+    className={`absolute top-4 ${
+      isOpen ? "left-4" : "left-1/2 -translate-x-1/2"
+    } z-20 transition-all duration-300`}
+  >
+    <button onClick={toggleSidebar} className="text-white">
+      <Menu size={22} />
+    </button>
+  </div>
 
+  {/* Logo */}
+  <div className=" pt-14 flex justify-center items-center">
+    {isOpen && (
+      <div className="w-40 h-14 flex items-center justify-center">
+        <img src={logo} alt="IEM Logo" className="object-contain" />
       </div>
+    )}
+  </div>
 
-      {/* Main navigation */}
+
+      {/* Navigation */}
       <nav className="flex-1 px-2 space-y-1 mt-4">
         {currentNav.map(({ to, icon, label }) =>
           navLink(to, icon, label, isOpen, location.pathname)
         )}
       </nav>
 
-      {/* Help section */}
+      {/* Help Section */}
       <div className={`px-2 pt-3 ${isOpen ? "border-t border-gray-800" : ""}`}>
         {isOpen && (
           <h3 className="text-xs text-gray-400 mb-2 px-2">Help & Support</h3>
@@ -116,7 +109,7 @@ const handleLogout = () => {
         {navLink("#feedback", ThumbsUp, "Feedback", isOpen)}
       </div>
 
-      {/* Logout */}
+      {/* Logout Button */}
       <div className="p-2">
         <button
           onClick={handleLogout}
@@ -130,7 +123,7 @@ const handleLogout = () => {
   );
 }
 
-// Link helper with key directly on Link element
+// Helper for Navigation Link
 function navLink(to, Icon, label, isOpen, currentPath = "") {
   const isActive = currentPath === to;
 
