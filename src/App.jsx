@@ -5,7 +5,7 @@ import "./App.css";
 import AppRoutes from "./AppRoutes";
 
 // Context providers - FIX: Using consistent import paths matching your structure
-import { DepartmentProvider } from "./contexts/SuperAdmin/DepartmentContext";
+// import { DepartmentProvider } from "./contexts/SuperAdmin/DepartmentContext";
 import { LoginProvider } from "./contexts/SuperAdmin/LoginContext";
 import { ErrorPopupProvider } from "./hooks/useHttp";
 
@@ -17,14 +17,14 @@ function App() {
     <BrowserRouter>
       <ErrorPopupProvider>
         <LoginProvider>
-          <DepartmentProvider>
+          
             <div className="bg-[#F3F3F3] min-h-screen">
               {/* FIX: Add error boundary for better error handling */}
               <React.Suspense fallback={<div>Loading...</div>}>
                 <AppRoutes />
               </React.Suspense>
             </div>
-          </DepartmentProvider>
+          
         </LoginProvider>
       </ErrorPopupProvider>
     </BrowserRouter>
