@@ -1,38 +1,20 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
+import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ErrorPopup } from "../utils/ErrorPopup";
 
+// Create Context for error handling
 const ErrorHandleContext = createContext();
 
-export const useErrorHandle = () => {
-  const context = useContext(ErrorHandleContext);
-  if (!context) {
-    console.warn("useErrorHandle must be used within ErrorPopupProvider");
-  }
-  return context;
-};
+// Hook to use the error handler
+export const useErrorHandle = () => useContext(ErrorHandleContext);
 
 export const useHttp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigateRef = useRef(null); // To use navigate safely
   const { showErrorPopup } = useErrorHandle() || {};
-
-  // Save navigate once it's available
   const navigate = useNavigate();
-  useEffect(() => {
-    navigateRef.current = navigate;
-  }, [navigate]);
 
-  const mainURL =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const mainURL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
@@ -41,21 +23,20 @@ export const useHttp = () => {
 
   const handleResponse = async (response) => {
     if ([401, 403].includes(response.status)) {
-      let errorMessage = "Unauthorized access";
+      const errorText = await response.text();
+      let errorMessage;
+
       try {
-        const errorJson = await response.json();
-        errorMessage = errorJson.message || errorMessage;
+        const errorJson = JSON.parse(errorText);
+        errorMessage = errorJson.message || `Error ${response.status}: ${response.statusText}`;
       } catch {
-        // fallback to default error message
+        errorMessage = errorText || `Error ${response.status}: ${response.statusText}`;
       }
 
       showErrorPopup?.(errorMessage);
-
       localStorage.clear();
       sessionStorage.clear();
-      if (navigateRef.current) {
-        navigateRef.current("/superadmin/login");
-      }
+      navigate("/superadmin/login");
       return null;
     }
 
@@ -84,19 +65,15 @@ export const useHttp = () => {
     setError(null);
 
     try {
-      token =
-        token ||
-        localStorage.getItem("token") ||
-        sessionStorage.getItem("token") ||
-        "";
+      token = token || localStorage.getItem("token") || sessionStorage.getItem("token") || "";
 
-      if (typeof token === "string" && token.trim() !== "") {
-        headers["Authorization"] = `Bearer ${token}`;
+      if (typeof token !== "string") {
+        console.warn("⚠️ Invalid token format:", typeof token, token);
+        token = typeof token === "object" && token?.token ? token.token : "";
       }
 
-      if (!isFormData && method !== "GET") {
-        headers["Content-Type"] = "application/json";
-      }
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      if (!isFormData && method !== "GET") headers["Content-Type"] = "application/json";
 
       const options = {
         method,
@@ -106,17 +83,15 @@ export const useHttp = () => {
           : {}),
       };
 
-      console.log("📡 Sending request:", buildUrl(url), options);
-
+      console.log("📡 Sending HTTP request:", buildUrl(url), options);
       const response = await fetch(buildUrl(url), options);
       const resData = await handleResponse(response);
 
       if (resData && !resData.success) {
-        const msg =
-          resData.data?.message?.includes("phone")
-            ? "Invalid phone number!!"
-            : resData.message || "An error occurred.";
-        showErrorPopup?.(msg);
+        const message = resData.data?.message?.includes("phone")
+          ? "Invalid phone number!!"
+          : resData.data?.message || "Please fill out the form accurately.";
+        showErrorPopup?.(message);
       }
 
       return resData;
@@ -131,19 +106,20 @@ export const useHttp = () => {
   return {
     getReq: (url, options = {}) => request({ url, method: "GET", ...options }),
     postReq: (url, data, token = "", headers = {}) =>
-      request({ url, method: "POST", data, token, headers }),
+    request({ url, method: "POST", data, token, headers }),
     loading,
     error,
     setError,
   };
 };
 
+// ErrorPopup context provider
 export const ErrorPopupProvider = ({ children }) => {
   const [popupMessage, setPopupMessage] = useState(null);
 
-  const showErrorPopup = useCallback((message) => {
+  const showErrorPopup = (message) => {
     setPopupMessage(message);
-  }, []);
+  };
 
   const closePopup = () => {
     setPopupMessage(null);
