@@ -2,7 +2,7 @@ import React from "react";
 import DepartmentCard from "./DepartmentCard";
 
 export default function DepartmentGrid({ departments, onEdit }) {
-  console.log("📦 Received departments in Grid:", departments); // <-- Add this log
+
 
   if (!departments || departments.length === 0) return <p>No departments found.</p>;
 
