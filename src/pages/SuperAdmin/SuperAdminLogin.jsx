@@ -21,23 +21,42 @@ function SuperAdminLogin() {
     }
   }, [isLogin, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError(null);
 
-    const response = await superAdminLogin(email, password, keepLoggedIn);
+  const response = await superAdminLogin(email, password, keepLoggedIn);
 
-    if (!response.success) {
-      setError(response.message || "Login failed");
-      return;
+  if (!response?.success) {
+    setError(response?.message || "Login failed");
+    return;
+  }
+
+  const { token, updatePassword } = response;
+
+  if (token) {
+    try {
+      // Always store in both storages
+      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
+
+      // If keepLoggedIn is true, also store token in cookie
+      if (keepLoggedIn) {
+        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24 * 1}`; // 30 days
+      }
+    } catch (storageError) {
+      console.error("⚠️ Error storing token:", storageError);
     }
+  }
 
-    if (response.updatePassword) {
-      navigate("/update-password", { state: { role: "superadmin" } });
-    } else {
-      navigate("/superadmin/dashboard");
-    }
-  };
+  if (updatePassword) {
+    navigate("/update-password", { state: { role: "superadmin" } });
+  } else {
+    navigate("/superadmin/dashboard");
+  }
+};
+
+
 
   return (
     <div className="min-h-screen flex urbanist p-4 bg-white">

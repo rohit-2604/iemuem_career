@@ -7,9 +7,12 @@ const LoginContext = createContext();
 export const LoginProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [authToken, setAuthToken] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const { postReq } = useHttp();
 
   const storeAuthData = (token, role, keepLoggedIn = false) => {
+    // Clear previous
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -17,6 +20,7 @@ export const LoginProvider = ({ children }) => {
     Cookies.remove("token");
     Cookies.remove("role");
 
+    // Store new
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", role);
 
@@ -24,6 +28,9 @@ export const LoginProvider = ({ children }) => {
       Cookies.set("token", token, { expires: 1 });
       Cookies.set("role", role, { expires: 1 });
     }
+
+    setAuthToken(token);
+    setUserRole(role);
   };
 
   const handleLogin = async ({
@@ -35,13 +42,10 @@ export const LoginProvider = ({ children }) => {
     keepLoggedIn = false,
   }) => {
     try {
-      console.log(`🔐 Logging in as ${roleKey}...`);
-
       if (!email || !password) {
         return { success: false, message: "Email and password are required" };
       }
 
-      // ✅ FIXED: Removed nested `data` wrapper
       const response = await postReq(endpoint, { email, password });
 
       if (!response?.success) {
@@ -62,9 +66,6 @@ export const LoginProvider = ({ children }) => {
         return { success: false, message: "No token received from server" };
       }
 
-      console.log("📦 Raw login response:", raw);
-      console.log("🔑 Token:", token);
-
       storeAuthData(token, roleKey, keepLoggedIn);
 
       const extraData = {};
@@ -76,6 +77,7 @@ export const LoginProvider = ({ children }) => {
       });
 
       setIsLogin(true);
+
       return {
         success: true,
         role: roleKey,
@@ -84,7 +86,6 @@ export const LoginProvider = ({ children }) => {
         updatePassword: raw?.updatePassword ?? false,
       };
     } catch (error) {
-      console.error("❌ Login error:", error);
       return {
         success: false,
         message:
@@ -93,7 +94,6 @@ export const LoginProvider = ({ children }) => {
     }
   };
 
-  // Login methods for different roles
   const superAdminLogin = (email, password, keepLoggedIn = false) =>
     handleLogin({
       endpoint: "/api/v1/superadmin/login",
@@ -132,18 +132,22 @@ export const LoginProvider = ({ children }) => {
     });
 
   const logout = () => {
-    console.log("🚪 Logging out...");
     localStorage.clear();
     sessionStorage.clear();
     Cookies.remove("token");
     Cookies.remove("role");
     setIsLogin(false);
+    setAuthToken(null);
+    setUserRole(null);
   };
 
   useEffect(() => {
     const token = Cookies.get("token") || sessionStorage.getItem("token");
+    const role = Cookies.get("role") || sessionStorage.getItem("role");
     if (token) {
       setIsLogin(true);
+      setAuthToken(token);
+      setUserRole(role);
     }
     setIsLoading(false);
   }, []);
@@ -154,13 +158,15 @@ export const LoginProvider = ({ children }) => {
     <LoginContext.Provider
       value={{
         isLogin,
+        isLoading,
+        authToken,
+        userRole,
         setIsLogin,
         superAdminLogin,
         deptLogin,
         modLogin,
         userLogin,
         logout,
-        isLoading,
       }}
     >
       {children}
