@@ -1,17 +1,23 @@
 import { SearchIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function SearchBar({ onSearch }) {
   const [search, setSearch] = useState("");
+  const isFirstRun = useRef(true); // ⛔️ Skip first render
 
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+
     const delayDebounce = setTimeout(() => {
       if (onSearch) {
-        onSearch(search); // Call parent with current input
+        onSearch(search);
       }
-    }, 300); // 300ms debounce
+    }, 300);
 
-    return () => clearTimeout(delayDebounce); // cleanup
+    return () => clearTimeout(delayDebounce);
   }, [search]);
 
   return (
@@ -26,7 +32,7 @@ export default function SearchBar({ onSearch }) {
       <button
         type="button"
         className="absolute right-3 top-1/2 -translate-y-1/2 transform"
-        onClick={() => onSearch(search)} // optional: search on button click too
+        onClick={() => onSearch(search)}
       >
         <SearchIcon className="h-5 w-5 text-gray-400" />
       </button>
