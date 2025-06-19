@@ -29,6 +29,7 @@ function userLogin() {
 
         if (!response.success) {
             setError(response.message || "Login failed");
+            navigate("/user/login");
             return;
         }
 
@@ -40,13 +41,13 @@ function userLogin() {
     };
 
     return (
-        <div className='"bg-[#f3f3f3] h-screen w-full flex items-center justify-center lg:px-[100px] p-[20px]'>
+        <div className='"bg-[#f3f3f3] h-screen w-full flex items-center justify-center lg:px-[6%] p-[20px]'>
             <div className='hidden lg:flex lg:w-1/2'>
                 <img src={bgImage} alt="Illustration" className='w-full h-full object-cover' loading="lazy" />
             </div>
             <div className='lg:w-1/2 bg-white rounded-2xl shadow-2xl'>
                 <div className='w-full h-full flex flex-col items-center justify-center p-[30px] md:p-[50px] lg:py-[80px] urbanist'>
-                    <div className="w-full max-w-md space-y-8">
+                    <div className="w-full max-w-lg space-y-8">
                         <div className="text-center w-full">
                             <h1 className="text-4xl font-bold">
                                 Sign in to <span className="text-[#367AFF]">IEM Recruit Hub</span>
@@ -55,9 +56,9 @@ function userLogin() {
                                 Log in to track your job applications or apply for new positions.
                             </p>
                         </div>
-                        <form className="space-y-6 inter" onSubmit={handleSubmit}>
+                        <form className="space-y-4 inter" onSubmit={handleSubmit}>
                             <div>
-                                <label htmlFor="email" className="block text-xl font-medium text-gray-700 mb-1">
+                                <label htmlFor="email" className="block text-xs font-medium text-gray-700 mb-1">
                                     Email
                                 </label>
                                 <input
@@ -72,7 +73,7 @@ function userLogin() {
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-xl font-medium text-gray-700 mb-1">
+                                <label htmlFor="password" className="block text-xs font-medium text-gray-700 mb-1">
                                     Password
                                 </label>
                                 <div className="relative">
@@ -115,7 +116,7 @@ function userLogin() {
 
                             <button
                                 type="submit"
-                                className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xl font-medium py-2 px-4 rounded-md transition duration-200"
+                                className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-2 px-4 rounded-md transition duration-200"
                             >
                                 Sign in
                             </button>
@@ -144,7 +145,7 @@ function userLogin() {
                             <div className="text-center inter">
                                 <p className="text-base text-[#6C6C6C]">
                                     Don't have an account?{" "}
-                                    <a href="#" className="text-[#367AFF] hover:text-blue-600 font-medium text-base">
+                                    <a href="/user/register" className="text-[#367AFF] hover:text-blue-600 font-medium text-base">
                                         Create one
                                     </a>
                                 </p>
