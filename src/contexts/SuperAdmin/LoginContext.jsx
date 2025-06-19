@@ -10,7 +10,6 @@ export const LoginProvider = ({ children }) => {
   const { postReq } = useHttp();
 
   const storeAuthData = (token, role, keepLoggedIn = false) => {
-    // Clear previous tokens
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -18,14 +17,12 @@ export const LoginProvider = ({ children }) => {
     Cookies.remove("token");
     Cookies.remove("role");
 
-    // Always save to sessionStorage
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", role);
 
     if (keepLoggedIn) {
-      // Save in cookies with 7 days expiry
-      Cookies.set("token", token, { expires: 7 });
-      Cookies.set("role", role, { expires: 7 });
+      Cookies.set("token", token, { expires: 1 });
+      Cookies.set("role", role, { expires: 1 });
     }
   };
 
@@ -44,21 +41,19 @@ export const LoginProvider = ({ children }) => {
         return { success: false, message: "Email and password are required" };
       }
 
-      const response = await postReq(endpoint, {
-        data: { email, password },
-      });
+      // ✅ FIXED: Removed nested `data` wrapper
+      const response = await postReq(endpoint, { email, password });
 
       if (!response?.success) {
         return { success: false, message: response?.message || "Login failed" };
       }
 
-      // ✅ Handle both raw string or object response
       let raw = response?.data?.data ?? response?.data ?? {};
       let token = "";
 
       if (typeof raw === "string") {
         token = raw;
-        raw = {}; // no other metadata if it's just a string
+        raw = {};
       } else {
         token = raw?.token || raw?.accessToken;
       }
@@ -70,7 +65,6 @@ export const LoginProvider = ({ children }) => {
       console.log("📦 Raw login response:", raw);
       console.log("🔑 Token:", token);
 
-      // Store auth data
       storeAuthData(token, roleKey, keepLoggedIn);
 
       const extraData = {};
@@ -99,6 +93,7 @@ export const LoginProvider = ({ children }) => {
     }
   };
 
+  // Login methods for different roles
   const superAdminLogin = (email, password, keepLoggedIn = false) =>
     handleLogin({
       endpoint: "/api/v1/superadmin/login",
@@ -146,7 +141,6 @@ export const LoginProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Check for token in cookies first, then sessionStorage
     const token = Cookies.get("token") || sessionStorage.getItem("token");
     if (token) {
       setIsLogin(true);
