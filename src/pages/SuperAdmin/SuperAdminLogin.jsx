@@ -36,13 +36,13 @@ const handleSubmit = async (e) => {
 
   if (token) {
     try {
-      // Always store in both storages
+
       localStorage.setItem("token", token);
       sessionStorage.setItem("token", token);
 
-      // If keepLoggedIn is true, also store token in cookie
+
       if (keepLoggedIn) {
-        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24 * 1}`; // 30 days
+        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}`;
       }
     } catch (storageError) {
       console.error("⚠️ Error storing token:", storageError);
