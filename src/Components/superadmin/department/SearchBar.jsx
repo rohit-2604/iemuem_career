@@ -17,12 +17,12 @@ export default function SearchBar({ onSearch }) {
         placeholder="Search here ..."
         className="w-full pl-4 bg-white py-2 rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#adadad]"
         value={search}
-        onChange={(e) => setSearch(e.target.value)} // 🔁 Set state on key press
+        onChange={(e) => setSearch(e.target.value)} 
       />
       <button
         type="button"
         className="absolute right-3 top-1/2 -translate-y-1/2 transform"
-        onClick={() => onSearch(search)} // still optional button click
+        onClick={() => onSearch(search)} 
       >
         <SearchIcon className="h-5 w-5 text-gray-400" />
       </button>
