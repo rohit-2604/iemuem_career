@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PlusIcon } from "lucide-react";
 import SearchBar from "../../Components/superadmin/department/SearchBar";
 import DepartmentGrid from "../../Components/superadmin/department/DepartmentGrid";
@@ -15,11 +15,14 @@ export default function Departments() {
   const [selectedDepartment, setSelectedDepartment] = useState(null);
 
   const { getReq } = useHttp();
+  const didInitialSearch = useRef(false); // Prevent early filter
 
   // Fetch departments
   useEffect(() => {
     const fetchDepartments = async () => {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+
       if (!token) {
         console.error("❌ No auth token found.");
         return;
@@ -30,15 +33,20 @@ export default function Departments() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const departmentsArray = response?.data?.departments ?? response?.data;
-        if (response?.success && Array.isArray(departmentsArray)) {
-          setDepartments(departmentsArray);
-          setFilteredDepartments(departmentsArray);
-        } else {
-          console.error("❌ Failed to fetch departments");
+        console.log("🌐 Fetched department response:", response);
+
+        const departmentsArray = Array.isArray(response?.data)
+          ? response.data
+          : [];
+
+        if (departmentsArray.length === 0) {
+          console.warn("⚠️ No departments found.");
         }
+
+        setDepartments(departmentsArray);
+        setFilteredDepartments(departmentsArray);
       } catch (err) {
-        console.error("❌ Error:", err);
+        console.error("❌ Error fetching departments:", err);
       } finally {
         setLoading(false);
       }
@@ -49,6 +57,7 @@ export default function Departments() {
 
   // Modal handlers
   const handleOpenCreateModal = () => setIsCreateModalOpen(true);
+
   const handleCloseCreateModal = (newDept = null) => {
     setIsCreateModalOpen(false);
     if (newDept) {
@@ -78,6 +87,10 @@ export default function Departments() {
 
   // Search logic
   const handleSearch = (searchText) => {
+    if (!didInitialSearch.current) {
+      didInitialSearch.current = true;
+    }
+
     if (!searchText) {
       setFilteredDepartments(departments);
     } else {
@@ -102,7 +115,7 @@ export default function Departments() {
             className="flex items-center gap-2 bg-[#367aff] hover:bg-blue-700 text-white px-4 py-2 rounded"
           >
             <PlusIcon className="w-4 h-4" />
-            Create New DepartMent
+            Create New Department
           </button>
         </div>
 
@@ -111,10 +124,15 @@ export default function Departments() {
           {loading ? (
             <p>Loading departments...</p>
           ) : (
-            <DepartmentGrid
-              departments={filteredDepartments}
-              onEdit={handleEditClick}
-            />
+            <>
+              <div className="text-sm text-gray-600 mb-2">
+                Showing {filteredDepartments.length} departments
+              </div>
+              <DepartmentGrid
+                departments={filteredDepartments}
+                onEdit={handleEditClick}
+              />
+            </>
           )}
         </div>
       </div>
