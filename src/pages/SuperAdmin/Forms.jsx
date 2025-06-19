@@ -34,7 +34,7 @@ function Forms() {
         {/*  search results */}
         <div className="w-full bg-[#fff] p-6 rounded-2xl">
           <h1 className="text-2xl">Search Results</h1>
-          <table className="flex flex-col content-between w-full overflow-hidden p-10">
+          <table className="flex flex-col w-full py-12 px-6">
             <thead className="">
               <tr>
                 <td className="py-2 px-4 text-center">No.</td>
