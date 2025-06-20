@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   Users,
+  ShieldUser
 } from "lucide-react";
 
 export default function Sidebar({ role = "guest" }) {
@@ -47,6 +48,7 @@ export default function Sidebar({ role = "guest" }) {
       { to: "/superadmin/dashboard", icon: LayoutGrid, label: "Dashboard" },
       { to: "/superadmin/departments", icon: Building2, label: "Departments" },
       { to: "/superadmin/forms", icon: FileText, label: "Forms" },
+      { to: "/superadmin/dept_admin", icon: ShieldUser , label: "Dept. Admin" },
       { to: "/superadmin/notifications", icon: Bell, label: "Notifications" },
       { to: "/superadmin/settings", icon: Settings, label: "Settings" },
     ],
@@ -67,30 +69,29 @@ export default function Sidebar({ role = "guest" }) {
 
   return (
     <div
-  className={`relative ${
-    isOpen ? "w-[220px]" : "w-[72px]"
-  } bg-black text-white flex flex-col h-screen sticky top-0 transition-all duration-300`}
->
-  {/* Toggle Button with Conditional Position */}
-  <div
-    className={`absolute top-4 ${
-      isOpen ? "left-4" : "left-1/2 -translate-x-1/2"
-    } z-20 transition-all duration-300`}
-  >
-    <button onClick={toggleSidebar} className="text-white">
-      <Menu size={22} />
-    </button>
-  </div>
-
-  {/* Logo */}
-  <div className=" pt-14 flex justify-center items-center">
-    {isOpen && (
-      <div className="w-40 h-14 flex items-center justify-center">
-        <img src={logo} alt="IEM Logo" className="object-contain" />
+      className={`relative ${
+        isOpen ? "w-[220px]" : "w-[72px]"
+      } bg-black text-white flex flex-col h-screen sticky top-0 transition-all duration-300`}
+    >
+      {/* Toggle Button */}
+      <div
+        className={`absolute top-4 ${
+          isOpen ? "left-4" : "left-1/2 -translate-x-1/2"
+        } z-20 transition-all duration-300`}
+      >
+        <button onClick={toggleSidebar} className="text-white">
+          <Menu size={22} />
+        </button>
       </div>
-    )}
-  </div>
 
+      {/* Logo */}
+      <div className="pt-14 flex justify-center items-center">
+        {isOpen && (
+          <div className="w-40 h-14 flex items-center justify-center">
+            <img src={logo} alt="IEM Logo" className="object-contain" />
+          </div>
+        )}
+      </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-2 space-y-1 mt-4">
@@ -111,13 +112,20 @@ export default function Sidebar({ role = "guest" }) {
 
       {/* Logout Button */}
       <div className="p-2">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 bg-gray-800 text-white border border-gray-700 rounded-md py-2 hover:bg-gray-700"
-        >
-          <LogOut className="h-4 w-4" />
-          {isOpen && <span>Logout</span>}
-        </button>
+        <div className="relative group">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 bg-gray-800 text-white border border-gray-700 rounded-md py-2 hover:bg-gray-700"
+          >
+            <LogOut className="h-4 w-4" />
+            {isOpen && <span>Logout</span>}
+          </button>
+          {!isOpen && (
+            <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+              Logout
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -128,15 +136,21 @@ function navLink(to, Icon, label, isOpen, currentPath = "") {
   const isActive = currentPath === to;
 
   return (
-    <Link
-      key={to}
-      to={to}
-      className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-        isActive ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-gray-800"
-      } ${!isOpen ? "justify-center" : ""}`}
-    >
-      <Icon className="h-5 w-5" />
-      {isOpen && <span>{label}</span>}
-    </Link>
+    <div key={to} className="relative group">
+      <Link
+        to={to}
+        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
+          isActive ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-gray-800"
+        } ${!isOpen ? "justify-center" : ""}`}
+      >
+        <Icon className="h-5 w-5" />
+        {isOpen && <span>{label}</span>}
+      </Link>
+      {!isOpen && (
+        <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+          {label}
+        </span>
+      )}
+    </div>
   );
 }
