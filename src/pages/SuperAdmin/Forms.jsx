@@ -1,9 +1,11 @@
 import { useState } from "react";
 import Filters from "../../Components/superadmin/forms/Filters";
 import SearchBar from "../../Components/superadmin/department/SearchBar";
-import CreateFormButton from "../../Components/superadmin/forms/CreateFormButton";
+import CreateFormButton from "../../Components/superadmin/forms/CreateJobFormButton";
 
 function Forms() {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  
   const allDepartments = [
     {
       no: "01",
@@ -93,7 +95,7 @@ const handleSearch = (searchText) => {
             <SearchBar onSearch={handleSearch} />
           </div>
           <Filters />
-          <CreateFormButton label="Create New Form" onClick={() => {}} />
+          <CreateFormButton label="Create New Job" onClick={() => {}} />
         </div>
 
         {/* Search Results */}

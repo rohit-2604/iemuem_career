@@ -21,6 +21,7 @@ import ModeratorDashboard from "./pages/Admin/Dashboard";
 import UserDashboard from "./pages/User/Dashboard";
 import Departments from "./pages/SuperAdmin/Departments";
 import DepartmentAdminDashboard from "./pages/SuperAdmin/DepartAdminDashboard";
+import CreateJobForm from "./Components/superadmin/forms/CreateJobForm";
 
 function AppRoutes() {
   return (
@@ -39,6 +40,7 @@ function AppRoutes() {
         <Route path="dashboard" element={<SuperAdminDashboard />} />
         <Route path="departments" element={<Departments />} />
         <Route path="forms" element={<SuperAdminForms />} />
+        <Route path="/superadmin/forms/create-job" element={<CreateJobForm />} />
         <Route path="dept_admin" element={<DepartmentAdminDashboard />} />
       </Route>
 
