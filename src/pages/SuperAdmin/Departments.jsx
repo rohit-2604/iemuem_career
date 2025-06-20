@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { PlusIcon } from "lucide-react";
 import SearchBar from "../../Components/superadmin/department/SearchBar";
 import DepartmentGrid from "../../Components/superadmin/department/DepartmentGrid";
-import CreateDepartmentModal from "../../Components/modals/CreateDepartmentModal";
-import EditDepartmentModal from "../../Components/modals/EditDepartmentModal";
+import CreateDepartmentModal from "../../Components/modals/Department/CreateDepartmentModal";
+import EditDepartmentModal from "../../Components/modals/Department/EditDepartmentModal";
 import { useHttp } from "../../hooks/useHttp";
 
 export default function Departments() {
