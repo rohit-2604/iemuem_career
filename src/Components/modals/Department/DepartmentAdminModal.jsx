@@ -25,7 +25,7 @@ export default function DepartmentAdminModal({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-black hover:bg-gray-200 rounded-full p-1 transition"
+          className="absolute top-4 right-4 text-gray-500 hover:text-black hover:bg-gray-200 hover:cursor-pointer rounded-full p-1 transition"
         >
           <X className="w-5 h-5" />
         </button>
@@ -131,14 +131,14 @@ export default function DepartmentAdminModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={() => console.log("Save Changes", formData)}
-            className="flex-1 flex items-center justify-center bg-[#367aff] text-white font-medium py-3 px-4 rounded-lg hover:bg-blue-700 transition"
+            className="flex-1 flex items-center justify-center bg-[#367aff] text-white font-medium py-3 px-4 rounded-lg hover:cursor-pointer hover:bg-blue-700 transition"
           >
             Save Changes
           </button>
 
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="flex-1 flex items-center justify-center border border-[#e94848] text-[#e94848] font-medium py-3 px-4 rounded-lg hover:bg-red-50 transition"
+            className="flex-1 flex items-center hover:cursor-pointer justify-center border border-[#e94848] text-[#e94848] font-medium py-3 px-4 rounded-lg hover:bg-red-50 transition"
           >
             Delete Admin
           </button>
@@ -158,13 +158,13 @@ export default function DepartmentAdminModal({
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+                className="px-6 py-2 border hover:cursor-pointer border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
               >
                 No, cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                className="px-6 py-2 hover:cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
                 Yes, Confirm
               </button>

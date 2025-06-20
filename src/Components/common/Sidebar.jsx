@@ -14,7 +14,7 @@ import {
   LogOut,
   Menu,
   Users,
-  ShieldUser
+  ShieldUser,
 } from "lucide-react";
 
 export default function Sidebar({ role = "guest" }) {
@@ -48,7 +48,7 @@ export default function Sidebar({ role = "guest" }) {
       { to: "/superadmin/dashboard", icon: LayoutGrid, label: "Dashboard" },
       { to: "/superadmin/departments", icon: Building2, label: "Departments" },
       { to: "/superadmin/forms", icon: FileText, label: "Forms" },
-      { to: "/superadmin/dept_admin", icon: ShieldUser , label: "Dept. Admin" },
+      { to: "/superadmin/dept_admin", icon: ShieldUser, label: "Dept. Admin" },
       { to: "/superadmin/notifications", icon: Bell, label: "Notifications" },
       { to: "/superadmin/settings", icon: Settings, label: "Settings" },
     ],
@@ -131,16 +131,21 @@ export default function Sidebar({ role = "guest" }) {
   );
 }
 
-// Helper for Navigation Link
+// ✅ Updated navLink helper
 function navLink(to, Icon, label, isOpen, currentPath = "") {
-  const isActive = currentPath === to;
+  const isActive =
+    currentPath === to || currentPath.startsWith(to + "/");
 
   return (
     <div key={to} className="relative group">
       <Link
         to={to}
         className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-          ${isActive ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r" : "text-gray-300 hover:bg-gray-800"}
+          ${
+            isActive
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"
+          }
           ${!isOpen ? "justify-center" : ""}
         `}
       >
