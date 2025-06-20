@@ -20,6 +20,7 @@ import ModeratorDashboard from "./pages/Admin/Dashboard";
 // User pages
 import UserDashboard from "./pages/User/Dashboard";
 import Departments from "./pages/SuperAdmin/Departments";
+import DepartmentAdminDashboard from "./pages/SuperAdmin/DepartAdminDashboard";
 
 function AppRoutes() {
   return (
@@ -38,6 +39,7 @@ function AppRoutes() {
         <Route path="dashboard" element={<SuperAdminDashboard />} />
         <Route path="departments" element={<Departments />} />
         <Route path="forms" element={<SuperAdminForms />} />
+        <Route path="dept_admin" element={<DepartmentAdminDashboard />} />
       </Route>
 
       {/* Moderator routes */}
