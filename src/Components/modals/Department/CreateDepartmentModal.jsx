@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHttp } from "../../hooks/useHttp"; // Adjust if path differs
+import { useHttp } from "../../../hooks/useHttp"; // Adjust if path differs
 
 const defaultDepartment = {
   name: "",
