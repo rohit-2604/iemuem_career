@@ -139,9 +139,10 @@ function navLink(to, Icon, label, isOpen, currentPath = "") {
     <div key={to} className="relative group">
       <Link
         to={to}
-        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-          isActive ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-gray-800"
-        } ${!isOpen ? "justify-center" : ""}`}
+        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+          ${isActive ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r" : "text-gray-300 hover:bg-gray-800"}
+          ${!isOpen ? "justify-center" : ""}
+        `}
       >
         <Icon className="h-5 w-5" />
         {isOpen && <span>{label}</span>}
