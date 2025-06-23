@@ -71,7 +71,7 @@ export default function DepartmentHiringChart() {
   }, []);
 
   return (
-    <div className=" rounded-lg bg-white shadow-sm p-4 h-full">
+    <div className=" rounded-lg bg-white shadow-sm p-4">
       <div className="mb-4">
         <h2 className="text-lg text-[#656575] font-medium">Department wise hiring</h2>
       </div>

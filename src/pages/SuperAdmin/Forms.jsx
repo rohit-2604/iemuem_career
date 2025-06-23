@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Filters from "../../Components/superadmin/forms/Filters";
-import SearchBar from "../../Components/superadmin/department/SearchBar";
-import CreateFormButton from "../../Components/superadmin/forms/CreateJobFormButton";
+import Filters from "../../Components/common/Filters";
+import SearchBar from "../../Components/common/SearchBar";
+import CreateButton from "../../Components/common/CreateButton";
 
 function Forms() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -95,7 +95,7 @@ const handleSearch = (searchText) => {
             <SearchBar onSearch={handleSearch} />
           </div>
           <Filters />
-          <CreateFormButton label="Create New Job" onClick={() => {}} />
+          <CreateButton label="Create New Job" url="/superadmin/forms/create-job" />
         </div>
 
         {/* Search Results */}
