@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useHttp } from '../../hooks/useHttp';
 
 function VerifyOTP({ email, onSuccess }) {
@@ -8,6 +9,7 @@ function VerifyOTP({ email, onSuccess }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const inputRefs = useRef([]);
+  const navigate = useNavigate();
   const { postReq } = useHttp();
 
   useEffect(() => {

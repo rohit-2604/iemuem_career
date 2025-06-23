@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 import Filters from "../../Components/common/Filters";
 import SearchBar from "../../Components/common/SearchBar";
 import CreateButton from "../../Components/common/CreateButton";
@@ -119,7 +119,7 @@ function Forms() {
           <div className="flex-1">
             <SearchBar onSearch={handleSearch} />
           </div>
-          <Filters onFilterChange={handleFilterChange} />
+          <Filters />
           <CreateButton label="Create New Job" url="/superadmin/forms/create-job" />
         </div>
 
