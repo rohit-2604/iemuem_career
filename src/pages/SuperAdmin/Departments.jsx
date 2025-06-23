@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { PlusIcon } from "lucide-react";
-import SearchBar from "../../Components/superadmin/department/SearchBar";
+import SearchBar from "../../Components/common/SearchBar";
 import DepartmentGrid from "../../Components/superadmin/department/DepartmentGrid";
 import CreateDepartmentModal from "../../Components/modals/Department/CreateDepartmentModal";
+import CreateButton from "../../Components/common/CreateButton";
 import EditDepartmentModal from "../../Components/modals/Department/EditDepartmentModal";
 import { useHttp } from "../../hooks/useHttp";
 
@@ -106,17 +106,11 @@ export default function Departments() {
     <div className="min-h-screen bg-[#dddddd] p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Controls */}
-        <div className="flex items-center gap-4 min-w-full">
+        <div className="flex items-center gap-5 min-w-full">
           <div className="flex-1">
             <SearchBar onSearch={handleSearch} />
           </div>
-          <button
-            onClick={handleOpenCreateModal}
-            className="flex items-center gap-2 bg-[#367aff] hover:bg-blue-700 text-white px-4 py-2 rounded"
-          >
-            <PlusIcon className="w-4 h-4" />
-            Create New Department
-          </button>
+          <CreateButton label="Create New Department" url=""/>
         </div>
 
         {/* Department Grid */}

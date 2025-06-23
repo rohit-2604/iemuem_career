@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import bgImage from '../../assets/user/UserSignup.png'
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import bgImage from '../../assets/user/UserSignup.png'
 import { useHttp } from "../../hooks/useHttp";
 
 function userRegister() {
@@ -217,12 +217,14 @@ function userRegister() {
                                 </div>
                             </div>
                             {error && <p className="text-red-600 text-sm">{error}</p>}
+                            <div className="flex justify-center">
                             <button
                                 type="submit"
-                                className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-2 px-4 rounded-md transition duration-200 lg:mt-8 md:mt-4 mt-2 justify-center"
+                                className="bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-2 px-30 rounded-md transition duration-200 lg:mt-8 md:mt-4 mt-2"
                             >
                                 Create Account
                             </button>
+                            </div>
                             {/* <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-300" />
