@@ -9,6 +9,7 @@ import SupAdminSignIn from "./pages/SuperAdmin/SuperAdminLogin";
 // import ModeratorLogin from "./pages/Auth/ModeratorLogin";
 import UserLogin from "./pages/User/userLogin";
 import UserRegister from "./pages/User/userRegister";
+import ResetPassword from "./pages/User/resetPassword"
 
 // SuperAdmin pages
 import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard";
@@ -34,6 +35,7 @@ function AppRoutes() {
       {/* <Route path="/moderator/login" element={<ModeratorLogin />} /> */}
       <Route path="/user/login" element={<UserLogin />} />
       <Route path="/user/register" element={<UserRegister />} />
+      <Route path="/user/resetpassword" element={<ResetPassword />} />
 
       {/* SuperAdmin routes */}
       <Route path="/superadmin" element={<Layout />}>

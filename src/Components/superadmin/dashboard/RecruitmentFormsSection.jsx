@@ -1,4 +1,5 @@
 import { ChevronRight, Plus } from "lucide-react"
+import CreateButton from "../../common/CreateButton"
 
 export default function RecruitmentFormsSection() {
   return (
@@ -21,10 +22,7 @@ export default function RecruitmentFormsSection() {
             <p className="text-lg font-medium">12</p>
           </div>
         </div>
-        <button className="w-full flex bg-[#367aff] text-white py-1 pr-4 pl-1 rounded-xl hover:bg-blue-700 transition-colors">
-          <Plus className="h-9 w-9 bg-white text-[#367aff] rounded-lg" />
-          <div className="flex items-center ml-[15%]">Create New Form</div>
-        </button>
+        <CreateButton label="Create New Form" url=""/>
       </div>
     </div>
   )

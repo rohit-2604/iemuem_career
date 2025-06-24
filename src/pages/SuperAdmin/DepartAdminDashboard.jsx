@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import user from "../../assets/superadmin/user1.jpg";
 import DepartmentAdminModal from "../../Components/modals/Department/DepartmentAdminModal";
+import SearchBar from "../../Components/common/SearchBar";
 
 const adminsData = [
   { adminId: "6465", name: "Ayush Ghoshal", department: "CSE", avatar: user },
@@ -53,7 +54,7 @@ export default function DepartmentAdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 inter">
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar Form */}
         <div className="w-full lg:w-1/4">
@@ -66,19 +67,18 @@ export default function DepartmentAdminDashboard() {
               {["name", "adminId", "phone", "email"].map((name) => (
                 <div key={name}>
                   <label
-                    className={`text-sm block mb-1 ${
-                      focusedField === name
+                    className={`text-sm block mb-1 ${focusedField === name
                         ? "text-blue-600 font-medium"
                         : "text-gray-600"
-                    }`}
+                      }`}
                   >
                     {name === "name"
                       ? "Department Admin Name"
                       : name === "adminId"
-                      ? "Admin ID No."
-                      : name === "phone"
-                      ? "Phone Number"
-                      : "Email Address"}
+                        ? "Admin ID No."
+                        : name === "phone"
+                          ? "Phone Number"
+                          : "Email Address"}
                   </label>
                   <input
                     type={name === "email" ? "email" : "text"}
@@ -87,22 +87,20 @@ export default function DepartmentAdminDashboard() {
                     onChange={handleChange}
                     onFocus={() => setFocusedField(name)}
                     onBlur={() => setFocusedField(null)}
-                    className={`w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 ${
-                      focusedField === name
+                    className={`w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 ${focusedField === name
                         ? "border-blue-500 ring-blue-500"
                         : "border-gray-300"
-                    }`}
+                      }`}
                   />
                 </div>
               ))}
 
               <div>
                 <label
-                  className={`text-sm block mb-1 ${
-                    focusedField === "department"
+                  className={`text-sm block mb-1 ${focusedField === "department"
                       ? "text-blue-600 font-medium"
                       : "text-gray-600"
-                  }`}
+                    }`}
                 >
                   Assign Department
                 </label>
@@ -112,11 +110,10 @@ export default function DepartmentAdminDashboard() {
                   onChange={handleChange}
                   onFocus={() => setFocusedField("department")}
                   onBlur={() => setFocusedField(null)}
-                  className={`w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 bg-white ${
-                    focusedField === "department"
+                  className={`w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 bg-white ${focusedField === "department"
                       ? "border-blue-500 ring-blue-500"
                       : "border-gray-300"
-                  }`}
+                    }`}
                 >
                   <option value="">Select Department</option>
                   <option value="IT">Information Technology</option>
@@ -130,11 +127,10 @@ export default function DepartmentAdminDashboard() {
                 return (
                   <div key={index}>
                     <label
-                      className={`text-sm block mb-1 ${
-                        focusedField === fieldName
+                      className={`text-sm block mb-1 ${focusedField === fieldName
                           ? "text-blue-600 font-medium"
                           : "text-gray-600"
-                      }`}
+                        }`}
                     >
                       Department Code {index + 1}
                     </label>
@@ -146,11 +142,10 @@ export default function DepartmentAdminDashboard() {
                       }
                       onFocus={() => setFocusedField(fieldName)}
                       onBlur={() => setFocusedField(null)}
-                      className={`w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 ${
-                        focusedField === fieldName
+                      className={`w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 ${focusedField === fieldName
                           ? "border-blue-500 ring-blue-500"
                           : "border-gray-300"
-                      }`}
+                        }`}
                     />
                   </div>
                 );
@@ -163,7 +158,6 @@ export default function DepartmentAdminDashboard() {
                 onClick={() => console.log("Add New Admin", formData)}
                 className="w-full flex items-center justify-center bg-[#367aff] text-white font-medium py-3 px-4 rounded-lg hover:bg-blue-700 transition"
               >
-                <Plus className="w-5 h-5 mr-2 bg-white text-[#367aff] rounded" />
                 Add New Admin
               </button>
 
@@ -180,18 +174,7 @@ export default function DepartmentAdminDashboard() {
 
         {/* Main Admin Table */}
         <div className="w-full lg:w-3/4 space-y-4">
-          <div className="bg-white rounded-lg shadow">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search by Admin Name or Department"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-white"
-              />
-            </div>
-          </div>
+          <SearchBar onSearch={() => { }} />
 
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
