@@ -28,9 +28,8 @@ function NewPasword({ accessToken }) {
         setLoading(true);
         try {
             const response = await postReq("/api/v1/user/forgetPassword", {
-                newPassword: password,
-                accessToken
-            });
+                newPassword: password
+            }, accessToken);
             if (response?.success) {
                 navigate("/user/login");
             } else {
