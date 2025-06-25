@@ -39,8 +39,8 @@ function LogInSuperAdmin({ onLoginSuccess }) {
 
     return (
         <div className="w-full max-w-md space-y-8">
-            <div className="text-center">
-                <h1 className="text-4xl font-bold">
+            <div className="text-center pb-5">
+                <h1 className="text-[45px] font-bold">
                     <span className="text-[#367AFF]">Super Admin</span> Sign in
                 </h1>
                 <p className="mt-2 text-base text-[#969696] inter">

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import background from "../../assets/superadmin/back.png";
 import front from "../../assets/superadmin/front.png";
+import background2 from "../../assets/superadmin/background2.png";
+import front2 from "../../assets/superadmin/front2.png";
 import LogInSuperAdmin from "../../Components/superadmin/auth/LogInSuperAdmin";
 import VerifyOTPSuperAdmin from "../../Components/superadmin/auth/VerifyOTPSuperAdmin";
 import { useNavigate } from "react-router-dom";
@@ -33,18 +35,18 @@ function SuperAdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex urbanist p-4 bg-white">
+    <div className="min-h-screen flex urbanist p-4 bg-gray-50">
       {/* Left Side */}
       <div className="hidden lg:flex lg:w-1/2 relative rounded-xl overflow-hidden p-4">
         <img
-          src={background}
+          src={step === "otp" ? background2 : background}
           alt="Background Illustration"
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"
         />
         <div className="relative z-10 flex items-center justify-center w-full p-12">
           <img
-            src={front}
+            src={step === "otp" ? front2 : front}
             alt="Front Illustration"
             className="object-contain max-w-[400px] max-h-[400px]"
             loading="lazy"
@@ -53,7 +55,7 @@ function SuperAdminLogin() {
       </div>
 
       {/* Right Side */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         {step === "login" ? (
           <LogInSuperAdmin onLoginSuccess={handleLoginSuccess} />
         ) : (

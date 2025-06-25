@@ -25,7 +25,7 @@ const statusOptions = [
 
 function Filters() {
   return (
-    <div className="flex items-center gap-5 text-gray-700 bg-gray-100">
+    <div className="flex items-center gap-5 text-gray-700">
       {/* Filter label with icon */}
       <div className="flex items-center space-x-2">
         <SlidersHorizontal className="w-5 h-5" />

@@ -78,8 +78,8 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
                 email,
                 otp: otp.join(''),
             });
-            if (response?.success && (response?.data?.token || response?.data?.accessToken)) {
-                if (onSuccess) onSuccess(response.data.token || response.data.accessToken, keepLoggedIn);
+            if (response?.success && (response?.data)) {
+                if (onSuccess) onSuccess(response.data, keepLoggedIn);
             } else {
                 setError(response?.message || 'OTP verification failed.');
             }
