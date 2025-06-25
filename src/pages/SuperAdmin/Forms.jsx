@@ -90,7 +90,7 @@ const handleSearch = (searchText) => {
     <div className="flex min-h-screen inter">
       <div className="flex w-full flex-col bg-[#f3f4f6] p-10 gap-y-8">
         {/* Search, Filters, Create Form */}
-        <div className="flex justify-end items-center gap-10">
+        <div className="flex justify-end items-center gap-5">
           <div className="flex-1">
             <SearchBar onSearch={handleSearch} />
           </div>

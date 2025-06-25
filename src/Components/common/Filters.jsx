@@ -1,43 +1,38 @@
-import { SlidersHorizontal, Building, BookCheck } from "lucide-react";
+import { SlidersHorizontal, Building2, CopyCheck } from "lucide-react";
+import IconDropdown from "./IconDropdown";
+
+const departmentOptions = [
+  { value: "", label: "Department" },
+  { value: "CSE", label: "CSE" },
+  { value: "ECE", label: "ECE" },
+  { value: "EEE", label: "EEE" },
+  { value: "EE", label: "EE" },
+  { value: "ME", label: "ME" },
+  { value: "AIML", label: "AIML" },
+  { value: "CSBS", label: "CSBS" },
+  { value: "BCA", label: "BCA" },
+  { value: "MCA", label: "MCA" },
+  { value: "IOT(CSBT)", label: "IOT(CSBT)" },
+  { value: "CSE(AI)", label: "CSE(AI)" },
+];
+
+const statusOptions = [
+  { value: "", label: "Form Status" },
+  { value: "live", label: "Live" },
+  { value: "closed", label: "Closed" },
+  { value: "pending", label: "Pending" },
+];
 
 function Filters() {
   return (
-    <div className="flex items-center space-x-4 text-gray-700 bg-gray-100 rounded-md">
+    <div className="flex items-center gap-5 text-gray-700">
       {/* Filter label with icon */}
       <div className="flex items-center space-x-2">
-        <SlidersHorizontal className="w-6 h-6" />
-        <span className="text-lg font-medium">Filter</span>
+        <SlidersHorizontal className="w-5 h-5" />
+        <span className="text-md font-medium">Filter</span>
       </div>
-
-      {/* Department dropdown */}
-      <div className="flex items-center space-x-2 border border-gray-300 bg-white px-3 py-1.5 rounded-md shadow-sm text-sm">
-        <Building className="w-8 h-8 text-gray-500" />
-        <select className="bg-white focus:outline-none text-lg p-2">
-          <option value="">Department</option>
-          <option value="CSE">CSE</option>
-          <option value="ECE">ECE</option>
-          <option value="EEE">EEE</option>
-          <option value="EE">EE</option>
-          <option value="ME">ME</option>
-          <option value="AIML">AIML</option>
-          <option value="CSBS">CSBS</option>
-          <option value="BCA">BCA</option>
-          <option value="MCA">MCA</option>
-          <option value="IOT(CSBT)">IOT(CSBT)</option>
-          <option value="CSE(AI)">CSE(AI)</option>
-        </select>
-      </div>
-
-      {/* Form Status dropdown */}
-      <div className="flex items-center space-x-2 border border-gray-300 bg-white px-3 py-1.5 rounded-md shadow-sm text-sm">
-        <BookCheck className="w-8 h-8 text-gray-500" />
-        <select className="bg-white focus:outline-none text-lg p-2">
-          <option value="">Form Status</option>
-          <option value="live">Live</option>
-          <option value="closed">Closed</option>
-          <option value="pending">Pending</option>
-        </select>
-      </div>
+      <IconDropdown icon={Building2} options={departmentOptions} />
+      <IconDropdown icon={CopyCheck} options={statusOptions} />
     </div>
   );
 }
