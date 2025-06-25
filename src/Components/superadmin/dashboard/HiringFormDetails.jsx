@@ -1,6 +1,9 @@
 import { CardSim, ChevronDown } from "lucide-react"
+import Filters from "../../common/Filters"
 
 export default function HiringFormDetails() {
+
+
   return (
     <div className=" rounded-lg shadow-md bg-white">
       {/* Header */}
@@ -13,23 +16,12 @@ export default function HiringFormDetails() {
 
       {/* Content */}
       <div className="p-4 space-y-4">
+        <div className="flex flex-wrap gap-5 justify-end">
         {/* Filters */}
-        <div className="flex flex-wrap gap-2">
-          <div className="flex-1 min-w-[200px]">
-            <button className="w-full flex justify-between items-center border border-gray-300 rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-              Department <ChevronDown className="h-4 w-4 opacity-50" />
-            </button>
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <button className="w-full flex justify-between items-center border border-gray-300 rounded-md px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-              Form Status <ChevronDown className="h-4 w-4 opacity-50" />
-            </button>
-          </div>
-          <div className="w-[120px]">
-            <button className="w-full bg-black text-white rounded-md px-4 py-2 hover:bg-gray-800">
-              Check
-            </button>
-          </div>
+            <Filters />
+              <button className=" bg-black text-white text-lg rounded-md px-4 py-2 hover:bg-gray-800">
+                Check
+              </button>
         </div>
 
         {/* Table */}
