@@ -1,6 +1,6 @@
 import { FiEdit3 } from "react-icons/fi";
 
-export default function DepartmentCard({ name, description, onChangeClick }) {
+export default function DepartmentCard({ name, description, departmentCode, onChangeClick }) {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow border border-gray-200 relative flex flex-col">
       {/* Header */}
@@ -23,6 +23,12 @@ export default function DepartmentCard({ name, description, onChangeClick }) {
         <p className="text-sm text-gray-700 mb-4">
           <span className="font-semibold">Description:</span>{" "}
           {description?.trim() ? description : "No description"}
+        </p>
+
+        {/* Department Code */}
+        <p className="text-sm text-gray-700 mb-4">
+          <span className="font-semibold">Department Code:</span>{" "}
+          {departmentCode?.trim() ? departmentCode : "N/A"}
         </p>
 
         {/* View Details Button */}

@@ -110,7 +110,10 @@ export default function Departments() {
           <div className="flex-1">
             <SearchBar onSearch={handleSearch} />
           </div>
-          <CreateButton label="Create New Department" url=""/>
+          <CreateButton
+            label="Create New Department"
+            onClick={handleOpenCreateModal}
+          />
         </div>
 
         {/* Department Grid */}

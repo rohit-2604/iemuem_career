@@ -1,78 +1,43 @@
-import { useEffect, useState } from "react";
-import { SlidersHorizontal, Building2, CopyCheck } from "lucide-react";
-import IconDropdown from "./IconDropdown";
-import { useHttp } from "../../hooks/useHttp";
+import { SlidersHorizontal, Building, BookCheck } from "lucide-react";
 
-const statusOptions = [
-  { value: "", label: "Form Status" },
-  { value: "live", label: "Live" },
-  { value: "closed", label: "Closed" },
-  { value: "pending", label: "Pending" },
-];
-
-function Filters({ onFilterChange }) {
-  const { getReq } = useHttp();
-  const [departmentOptions, setDepartmentOptions] = useState([
-    { value: "", label: "Department" },
-  ]);
-  const [loading, setLoading] = useState(true);
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
-
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setLoading(true);
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      try {
-        const response = await getReq("api/v1/department/getAllDepartments", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const departmentsArray = Array.isArray(response?.data)
-          ? response.data
-          : [];
-        const options = [
-          { value: "", label: "Department" },
-          ...departmentsArray.map((dept) => ({
-            value: dept.name,
-            label: dept.name,
-          })),
-        ];
-        setDepartmentOptions(options);
-      } catch (err) {
-        setDepartmentOptions([{ value: "", label: "Department" }]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDepartments();
-  }, []);
-
-  useEffect(() => {
-    if (onFilterChange) {
-      onFilterChange({ department: selectedDepartment, status: selectedStatus });
-    }
-  }, [selectedDepartment, selectedStatus, onFilterChange]);
-
+function Filters() {
   return (
-    <div className="flex items-center gap-5 text-gray-700">
+    <div className="flex items-center space-x-4 text-gray-700 bg-gray-100 rounded-md">
       {/* Filter label with icon */}
       <div className="flex items-center space-x-2">
-        <SlidersHorizontal className="w-5 h-5" />
-        <span className="text-md font-medium">Filter</span>
+        <SlidersHorizontal className="w-6 h-6" />
+        <span className="text-lg font-medium">Filter</span>
       </div>
-      <IconDropdown
-        icon={Building2}
-        options={departmentOptions}
-        disabled={loading}
-        value={selectedDepartment}
-        onChange={e => setSelectedDepartment(e.target.value)}
-      />
-      <IconDropdown
-        icon={CopyCheck}
-        options={statusOptions}
-        value={selectedStatus}
-        onChange={e => setSelectedStatus(e.target.value)}
-      />
+
+      {/* Department dropdown */}
+      <div className="flex items-center space-x-2 border border-gray-300 bg-white px-3 py-1.5 rounded-md shadow-sm text-sm">
+        <Building className="w-8 h-8 text-gray-500" />
+        <select className="bg-white focus:outline-none text-lg p-2">
+          <option value="">Department</option>
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="EEE">EEE</option>
+          <option value="EE">EE</option>
+          <option value="ME">ME</option>
+          <option value="AIML">AIML</option>
+          <option value="CSBS">CSBS</option>
+          <option value="BCA">BCA</option>
+          <option value="MCA">MCA</option>
+          <option value="IOT(CSBT)">IOT(CSBT)</option>
+          <option value="CSE(AI)">CSE(AI)</option>
+        </select>
+      </div>
+
+      {/* Form Status dropdown */}
+      <div className="flex items-center space-x-2 border border-gray-300 bg-white px-3 py-1.5 rounded-md shadow-sm text-sm">
+        <BookCheck className="w-8 h-8 text-gray-500" />
+        <select className="bg-white focus:outline-none text-lg p-2">
+          <option value="">Form Status</option>
+          <option value="live">Live</option>
+          <option value="closed">Closed</option>
+          <option value="pending">Pending</option>
+        </select>
+      </div>
     </div>
   );
 }

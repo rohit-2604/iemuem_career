@@ -16,7 +16,7 @@ export default function SearchBar({ onSearch }) {
       <input
         type="search"
         placeholder="Search here"
-        className="w-full pr-8 p-2 border border-gray-300 rounded-xl bg-white text-lg shadow-sm flex-1"
+        className="w-full pr-8 p-2 border border-gray-300 rounded-xl bg-white shadow-sm flex-1"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
