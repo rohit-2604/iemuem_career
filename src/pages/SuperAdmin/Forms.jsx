@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Filters from "../../Components/common/Filters";
 import SearchBar from "../../Components/common/SearchBar";
 import CreateButton from "../../Components/common/CreateButton";
@@ -48,21 +48,46 @@ function Forms() {
   ];
 
   const [filteredDepartments, setFilteredDepartments] = useState(allDepartments);
+  const [searchText, setSearchText] = useState("");
+  const [filters, setFilters] = useState({ department: "", status: "" });
 
-const handleSearch = (searchText) => {
-  if (!searchText) {
-    setFilteredDepartments(allDepartments);
-  } else {
-    const lowerSearch = searchText.toLowerCase();
-    const filtered = allDepartments.filter((dept) =>
-      dept.department.toLowerCase().includes(lowerSearch) ||
-      dept.adminName.toLowerCase().includes(lowerSearch) ||
-      dept.roleName.toLowerCase().includes(lowerSearch)
-    );
+  // Combine search and filter
+  const applyFilters = useCallback(() => {
+    let filtered = allDepartments;
+    if (filters.department) {
+      filtered = filtered.filter(
+        (dept) => dept.department === filters.department
+      );
+    }
+    if (filters.status) {
+      filtered = filtered.filter(
+        (dept) => dept.formStatus.toLowerCase() === filters.status.toLowerCase()
+      );
+    }
+    if (searchText) {
+      const lowerSearch = searchText.toLowerCase();
+      filtered = filtered.filter(
+        (dept) =>
+          dept.department.toLowerCase().includes(lowerSearch) ||
+          dept.adminName.toLowerCase().includes(lowerSearch) ||
+          dept.roleName.toLowerCase().includes(lowerSearch)
+      );
+    }
     setFilteredDepartments(filtered);
-  }
-};
+  }, [allDepartments, filters, searchText]);
 
+  const handleSearch = (text) => {
+    setSearchText(text);
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  // Re-apply filters whenever searchText or filters change
+  useEffect(() => {
+    applyFilters();
+  }, [searchText, filters, applyFilters]);
 
   const getStatusText = (status) => {
     const getDotColor = (status) => {
@@ -94,7 +119,7 @@ const handleSearch = (searchText) => {
           <div className="flex-1">
             <SearchBar onSearch={handleSearch} />
           </div>
-          <Filters />
+          <Filters onFilterChange={handleFilterChange} />
           <CreateButton label="Create New Job" url="/superadmin/forms/create-job" />
         </div>
 
