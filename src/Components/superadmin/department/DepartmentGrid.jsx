@@ -1,18 +1,14 @@
-import React from "react";
 import DepartmentCard from "./DepartmentCard";
 
 export default function DepartmentGrid({ departments, onEdit }) {
-
-
-  if (!departments || departments.length === 0) return <p>No departments found.</p>;
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {departments.map((dept) => (
         <DepartmentCard
           key={dept._id}
           name={dept.name}
           description={dept.description}
+          departmentCode={dept.code || dept.departmentCode} // 🔍 Ensure you're matching the correct key
           onChangeClick={() => onEdit(dept)}
         />
       ))}

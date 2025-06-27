@@ -1,40 +1,41 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Filters from "../../Components/common/Filters";
 import SearchBar from "../../Components/common/SearchBar";
 import CreateButton from "../../Components/common/CreateButton";
 
+// ✅ Move this outside the component
+const allDepartments = [
+  {
+    no: "01",
+    department: "CSE",
+    adminName: "Ayush Ghoshal",
+    formStatus: "Live",
+    applicants: 125,
+    openings: 7,
+    roleName: "Cloud Assistant Professor",
+  },
+  {
+    no: "02",
+    department: "ECE",
+    adminName: "Biswadip Saha",
+    formStatus: "Live",
+    applicants: 36,
+    openings: 4,
+    roleName: "Microprocessor Professor",
+  },
+  {
+    no: "03",
+    department: "ECE",
+    adminName: "Biswadip Saha",
+    formStatus: "Closed",
+    applicants: 36,
+    openings: 4,
+    roleName: "Microprocessor Professor",
+  },
+];
+
 function Forms() {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  
-  const allDepartments = [
-    {
-      no: "01",
-      department: "CSE",
-      adminName: "Ayush Ghoshal",
-      formStatus: "Live",
-      applicants: 125,
-      openings: 7,
-      roleName: "Cloud Assistant Professor",
-    },
-    {
-      no: "02",
-      department: "ECE",
-      adminName: "Biswadip Saha",
-      formStatus: "Live",
-      applicants: 36,
-      openings: 4,
-      roleName: "Microprocessor Professor",
-    },
-    {
-      no: "03",
-      department: "ECE",
-      adminName: "Biswadip Saha",
-      formStatus: "Closed",
-      applicants: 36,
-      openings: 4,
-      roleName: "Microprocessor Professor",
-    },
-  ];
 
   const drafts = [
     {
@@ -51,19 +52,19 @@ function Forms() {
   const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState({ department: "", status: "" });
 
-  // Combine search and filter
   const applyFilters = useCallback(() => {
     let filtered = allDepartments;
+
     if (filters.department) {
-      filtered = filtered.filter(
-        (dept) => dept.department === filters.department
-      );
+      filtered = filtered.filter((dept) => dept.department === filters.department);
     }
+
     if (filters.status) {
       filtered = filtered.filter(
         (dept) => dept.formStatus.toLowerCase() === filters.status.toLowerCase()
       );
     }
+
     if (searchText) {
       const lowerSearch = searchText.toLowerCase();
       filtered = filtered.filter(
@@ -73,8 +74,13 @@ function Forms() {
           dept.roleName.toLowerCase().includes(lowerSearch)
       );
     }
+
     setFilteredDepartments(filtered);
-  }, [allDepartments, filters, searchText]);
+  }, [filters, searchText]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleSearch = (text) => {
     setSearchText(text);
@@ -83,11 +89,6 @@ function Forms() {
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
-
-  // Re-apply filters whenever searchText or filters change
-  useEffect(() => {
-    applyFilters();
-  }, [searchText, filters, applyFilters]);
 
   const getStatusText = (status) => {
     const getDotColor = (status) => {
@@ -119,14 +120,14 @@ function Forms() {
           <div className="flex-1">
             <SearchBar onSearch={handleSearch} />
           </div>
-          <Filters />
+          <Filters onChange={handleFilterChange} />
           <CreateButton label="Create New Job" url="/superadmin/forms/create-job" />
         </div>
 
         {/* Search Results */}
         <div className="w-full bg-white p-6 rounded-2xl shadow-2xl">
           <h1 className="text-2xl mb-4">Search Results</h1>
-          <table className="w-full table-auto  border-gray-500">
+          <table className="w-full table-auto border-gray-500">
             <thead>
               <tr className="bg-gray-100">
                 <th className="px-4 py-2">No.</th>
@@ -157,7 +158,7 @@ function Forms() {
         {/* Forms in Draft */}
         <div className="w-full bg-white p-6 rounded-2xl shadow-2xl">
           <h1 className="text-2xl mb-4">Forms in Draft</h1>
-          <table className="w-full table-auto  border-gray-300">
+          <table className="w-full table-auto border-gray-300">
             <thead>
               <tr className="bg-gray-100">
                 <th className="px-4 py-2">No.</th>
@@ -171,7 +172,7 @@ function Forms() {
             </thead>
             <tbody>
               {drafts.map((form, index) => (
-                <tr key={index} className="text-center border-t border-gray-300 ">
+                <tr key={index} className="text-center border-t border-gray-300">
                   <td className="px-4 py-2">{form.no}</td>
                   <td className="px-4 py-2">{form.department}</td>
                   <td className="px-4 py-2">{form.adminName}</td>

@@ -91,7 +91,8 @@ const handleSaveChanges = async () => {
         {/* Body */}
         <div className="px-6 py-4 space-y-4">
           {[{ id: "departmentName", label: "Department Name", field: "name" },
-            { id: "description", label: "Description", field: "description" }
+            { id: "description", label: "Description", field: "description" },
+            { id: "departmentCode", label: "departmentCode", field: "departmentCode" }
           ].map(({ id, label, field }) => (
             <div key={id} className="space-y-1">
               <label htmlFor={id} className="text-sm">
