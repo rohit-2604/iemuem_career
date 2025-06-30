@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import SearchBar from "../../Components/common/SearchBar";
 import DepartmentGrid from "../../Components/superadmin/department/DepartmentGrid";
 import CreateDepartmentModal from "../../Components/modals/Department/CreateDepartmentModal";
-import CreateButton from "../../Components/common/CreateButton";
 import EditDepartmentModal from "../../Components/modals/Department/EditDepartmentModal";
 import { useHttp } from "../../hooks/useHttp";
+import CreateButton from "../../Components/common/CreateButton";
 
 export default function Departments() {
   const [departments, setDepartments] = useState([]);
@@ -15,9 +15,9 @@ export default function Departments() {
   const [selectedDepartment, setSelectedDepartment] = useState(null);
 
   const { getReq } = useHttp();
-  const didInitialSearch = useRef(false); // Prevent early filter
+  const didInitialSearch = useRef(false);
 
-  // Fetch departments
+  // Fetch departments on mount
   useEffect(() => {
     const fetchDepartments = async () => {
       const token =
@@ -25,6 +25,7 @@ export default function Departments() {
 
       if (!token) {
         console.error("❌ No auth token found.");
+        window.location.href = "/login";
         return;
       }
 
@@ -33,20 +34,18 @@ export default function Departments() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("🌐 Fetched department response:", response);
-
         const departmentsArray = Array.isArray(response?.data)
           ? response.data
           : [];
-
-        if (departmentsArray.length === 0) {
-          console.warn("⚠️ No departments found.");
-        }
 
         setDepartments(departmentsArray);
         setFilteredDepartments(departmentsArray);
       } catch (err) {
         console.error("❌ Error fetching departments:", err);
+        if (err.response?.status === 401) {
+          console.warn("⚠️ Unauthorized, redirecting to login...");
+          window.location.href = "/login";
+        }
       } finally {
         setLoading(false);
       }
@@ -56,7 +55,9 @@ export default function Departments() {
   }, []);
 
   // Modal handlers
-  const handleOpenCreateModal = () => setIsCreateModalOpen(true);
+  const handleOpenCreateModal = () => {
+    setIsCreateModalOpen(true); 
+  };
 
   const handleCloseCreateModal = (newDept = null) => {
     setIsCreateModalOpen(false);
