@@ -4,6 +4,7 @@ import { useHttp } from "../../../hooks/useHttp"; // Adjust if path differs
 const defaultDepartment = {
   name: "",
   description: "",
+  departmentCode: "",
   allowAdminToPostJobs: false,
   enableAutoApproval: false,
 };
@@ -42,6 +43,7 @@ const handleSaveChanges = async () => {
   const payload = {
     name,
     description,
+    departmentCode: formData.departmentCode.trim(),
 
   };
 
