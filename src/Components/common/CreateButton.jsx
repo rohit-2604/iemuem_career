@@ -6,9 +6,9 @@ function CreateButton({ label = "Create", url = "/", onClick }) {
 
   const handleClick = () => {
     if (typeof onClick === "function") {
-      onClick(); // Trigger custom action like opening a modal
+      onClick(); 
     } else {
-      navigate(url); // Navigate to URL if no onClick provided
+      navigate(url); 
     }
   };
 
