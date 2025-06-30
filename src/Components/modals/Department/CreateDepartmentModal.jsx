@@ -38,6 +38,11 @@ export default function CreateDepartmentModal({ isOpen, onClose, department }) {
     const name = formData.name.trim();
     const departmentCode = formData.departmentCode.trim();
 
+    if (!token) {
+      alert("You are not authenticated.");
+      return;
+    }
+
     if (!name || !departmentCode) return;
 
     const payload = {
@@ -52,7 +57,16 @@ export default function CreateDepartmentModal({ isOpen, onClose, department }) {
 
     try {
       setLoading(true);
-      const res = await postReq("api/v1/department/create", payload, token);
+      const res = await postReq(
+        "api/v1/department/create",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       if (res?.success) {
         const createdDept = res.data?.department || res.data;
         onClose(createdDept);
@@ -73,7 +87,9 @@ export default function CreateDepartmentModal({ isOpen, onClose, department }) {
       <div className="bg-white rounded-lg w-full max-w-md shadow-lg overflow-hidden p-6">
         {/* Header */}
         <div className="flex items-center justify-between border-b pb-3">
-          <h2 className="text-lg font-semibold text-gray-900 text-center flex-1">Create New Department</h2>
+          <h2 className="text-lg font-semibold text-gray-900 text-center flex-1">
+            Create New Department
+          </h2>
           <button
             onClick={() => onClose(null)}
             className="text-gray-500 hover:text-white hover:bg-[#919191] rounded-full w-8 h-8 flex items-center justify-center transition"
@@ -82,7 +98,7 @@ export default function CreateDepartmentModal({ isOpen, onClose, department }) {
           </button>
         </div>
 
-        {/* Form */}
+        {/* Form Fields */}
         <div className="mt-4 space-y-4">
           {[
             { name: "name", label: "Department Name" },
@@ -115,7 +131,7 @@ export default function CreateDepartmentModal({ isOpen, onClose, department }) {
             </div>
           ))}
 
-          {/* Switches */}
+          {/* Toggles */}
           <div className="pt-2 space-y-4">
             <div className="flex items-center justify-between">
               <label className="text-sm text-gray-600">

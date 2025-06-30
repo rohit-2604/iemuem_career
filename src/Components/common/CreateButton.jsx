@@ -1,12 +1,16 @@
-import { Plus } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-function CreateButton({ label = "Create", url = "/" }) {
-  const navigate = useNavigate()
+function CreateButton({ label = "Create", url = "/", onClick }) {
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(url)
-  }
+    if (typeof onClick === "function") {
+      onClick(); // Trigger custom action like opening a modal
+    } else {
+      navigate(url); // Navigate to URL if no onClick provided
+    }
+  };
 
   return (
     <button
@@ -14,9 +18,11 @@ function CreateButton({ label = "Create", url = "/" }) {
       className="w-full max-w-[250px] flex justify-center items-center bg-[#367aff] text-white p-1 rounded-xl hover:bg-blue-700 transition-colors inter"
     >
       <Plus className="h-9 w-9 bg-white text-[#367aff] rounded-lg p-1" />
-      <span className="mx-3 text-xs md:text-base whitespace-nowrap text-center flex-1">{label}</span>
+      <span className="mx-3 text-xs md:text-base whitespace-nowrap text-center flex-1">
+        {label}
+      </span>
     </button>
-  )
+  );
 }
 
 export default CreateButton;
