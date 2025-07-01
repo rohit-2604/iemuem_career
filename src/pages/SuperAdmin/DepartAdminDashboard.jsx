@@ -4,6 +4,7 @@ import user from "../../assets/superadmin/user1.jpg";
 import DepartmentAdminModal from "../../Components/modals/Department/DepartmentAdminModal";
 import AddDepartmentAdminModal from "../../Components/modals/deptAdmin/AddDepartmentAdminModal";
 import SearchBar from "../../Components/common/SearchBar";
+import DotSpinner from "../../Components/common/DotSpinner";
 import { useHttp } from "../../hooks/useHttp";
 
 export default function DepartmentAdminDashboard() {
@@ -25,11 +26,13 @@ export default function DepartmentAdminDashboard() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);  // <-- added loading state
 
   const resetForm = () => setFormData(initialForm);
 
   useEffect(() => {
     const fetchAdmins = async () => {
+      setLoading(true);  // <-- start loading
       try {
         const response = await getReq("/api/v1/departmentadmin/getAllDepartmentAdmins");
 
@@ -53,6 +56,8 @@ export default function DepartmentAdminDashboard() {
         setAdminsData(formattedData);
       } catch (error) {
         console.error("Failed to fetch department admins:", error);
+      } finally {
+        setLoading(false); // <-- done loading
       }
     };
 
@@ -96,8 +101,12 @@ export default function DepartmentAdminDashboard() {
             <div className="col-span-3">Department</div>
           </div>
 
-          <div className="mt-4 space-y-2">
-            {filteredAdmins.length > 0 ? (
+          <div className="mt-4 space-y-2 min-h-[150px]">
+            {loading ? (
+              <div className="flex justify-center py-10">
+                <DotSpinner size={40} />
+              </div>
+            ) : filteredAdmins.length > 0 ? (
               filteredAdmins.map((admin, index) => (
                 <div
                   key={admin.adminId}
@@ -108,7 +117,7 @@ export default function DepartmentAdminDashboard() {
                   </div>
                   <div className="col-span-2">
                     <span className="bg-gray-100 px-2 py-1 rounded font-mono text-gray-700 text-sm">
-                      {admin.adminId}
+                      {admin.adminId.slice(0, 8)}
                     </span>
                   </div>
                   <div className="col-span-4 flex items-center gap-3">
