@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useHttp } from '../../../hooks/useHttp';
+import DotSpinner from '../../common/DotSpinner';
 
 function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -78,7 +79,7 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
                 email,
                 otp: otp.join(''),
             });
-            if (response?.success && (response?.data)) {
+            if (response?.success && response?.data) {
                 if (onSuccess) onSuccess(response.data, keepLoggedIn);
             } else {
                 setError(response?.message || 'OTP verification failed.');
@@ -91,8 +92,8 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
     };
 
     return (
-        <div className="w-full h-full flex flex-col items-center justify-center p-[30px] md:p-[50px] lg:py-[60px] urbanist">
-            <div className="w-full max-w-lg space-y-8">
+        <div className="w-full h-full flex flex-col items-center justify-center p-[30px] md:p-[50px] lg:py-[60px] urbanist relative">
+            <div className={`w-full max-w-lg space-y-8 ${loading ? "pointer-events-none opacity-50" : ""}`}>
                 <div className="text-center w-full">
                     <h1 className="text-4xl font-bold flex flex-col gap-2">
                         <span className="text-[#367AFF]">Verify OTP</span>
@@ -102,6 +103,7 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
                         We've sent a one-time password (OTP) to your registered email address. Please enter the 6-digit code below to complete your sign-in as Superadmin.
                     </p>
                 </div>
+
                 <form className="space-y-6 inter text-gray-600" onSubmit={handleSubmit}>
                     <div className="flex justify-center gap-3" onPaste={handlePaste}>
                         {otp.map((digit, idx) => (
@@ -116,20 +118,31 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
                                 onKeyDown={e => handleKeyDown(e, idx)}
                                 className="w-14 h-14 text-2xl text-center border border-gray-200 rounded-lg bg-gray-100 focus:bg-white focus:border-blue-400 focus:outline-none transition"
                                 autoFocus={idx === 0}
+                                disabled={loading}
                             />
                         ))}
                     </div>
+
                     <div className="flex justify-center items-center gap-2">
                         {timer > 0 ? (
-                            <span className="text-blue-500 text-sm cursor-not-allowed select-none">Resend in {timer}s</span>
+                            <span className="text-blue-500 text-sm cursor-not-allowed select-none">
+                                Resend in {timer}s
+                            </span>
                         ) : (
-                            <button type="button" className="text-blue-500 text-sm hover:underline" onClick={handleResend} disabled={resending}>
+                            <button
+                                type="button"
+                                className="text-blue-500 text-sm hover:underline"
+                                onClick={handleResend}
+                                disabled={resending || loading}
+                            >
                                 {resending ? 'Resending...' : 'Resend'}
                             </button>
                         )}
                     </div>
+
                     {error && <p className="text-red-600 text-sm text-center">{error}</p>}
-                    <div className="flex justify-center">
+
+                    <div className="flex flex-col items-center">
                         <button
                             type="submit"
                             className="bg-blue-500 hover:bg-blue-600 text-white text-lg font-medium py-2 px-20 rounded-md transition duration-200"
@@ -137,6 +150,11 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
                         >
                             {loading ? 'Verifying...' : 'Verify'}
                         </button>
+                        {loading && (
+                            <div className="mt-3">
+                                <DotSpinner size={24} />
+                            </div>
+                        )}
                     </div>
                 </form>
             </div>

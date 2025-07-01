@@ -5,6 +5,7 @@ import CreateDepartmentModal from "../../Components/modals/Department/CreateDepa
 import EditDepartmentModal from "../../Components/modals/Department/EditDepartmentModal";
 import { useHttp } from "../../hooks/useHttp";
 import CreateButton from "../../Components/common/CreateButton";
+import DotSpinner from "../../Components/common/DotSpinner";
 
 export default function Departments() {
   const [departments, setDepartments] = useState([]);
@@ -56,7 +57,7 @@ export default function Departments() {
 
   // Modal handlers
   const handleOpenCreateModal = () => {
-    setIsCreateModalOpen(true); 
+    setIsCreateModalOpen(true);
   };
 
   const handleCloseCreateModal = (newDept = null) => {
@@ -120,7 +121,9 @@ export default function Departments() {
         {/* Department Grid */}
         <div className="mt-6">
           {loading ? (
-            <p>Loading departments...</p>
+            <div className="flex justify-center items-center py-10">
+              <DotSpinner size={40} />
+            </div>
           ) : (
             <>
               <div className="text-sm text-gray-600 mb-2">
