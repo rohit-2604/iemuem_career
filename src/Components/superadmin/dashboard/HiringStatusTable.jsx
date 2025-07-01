@@ -1,6 +1,6 @@
 import { Filter, SlidersHorizontal, Users } from "lucide-react"
-import  user1 from "../../../assets/superadmin/user1.jpg"
-import  user2 from "../../../assets/superadmin/user2.jpg"
+import  user1 from "../../../assets/user1.jpg"
+import  user2 from "../../../assets/user2.jpg"
 
 
 export default function HiringStatusTable() {
