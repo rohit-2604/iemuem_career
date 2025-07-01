@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import bgImage from '../../assets/user/UserSignup.png'
+import bgImage from '../../assets/UserSignup.png'
 import SendOTP from "../../Components/user/SendOTP";
 import VerifyOTP from "../../Components/user/VerifyOTP";
 import NewPasword from "../../Components/user/NewPasword";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/superadmin/iem_logo.png";
+import logo from "../../assets/iem_logo.png";
 import Cookies from "js-cookie";
 import {
   LayoutGrid,

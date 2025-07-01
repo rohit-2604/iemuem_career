@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import bgImage from '../../assets/user/UserSignup.png'
+import bgImage from '../../assets/UserSignup.png'
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useHttp } from "../../hooks/useHttp";

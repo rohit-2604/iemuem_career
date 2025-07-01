@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import background from "../../assets/superadmin/back.png";
-import front from "../../assets/superadmin/front.png";
-import background2 from "../../assets/superadmin/background2.png";
-import front2 from "../../assets/superadmin/front2.png";
+import background from "../../assets/back.png";
+import front from "../../assets/front.png";
+import background2 from "../../assets/background2.png";
+import front2 from "../../assets/front2.png";
 import LogInSuperAdmin from "../../Components/superadmin/auth/LogInSuperAdmin";
 import VerifyOTPSuperAdmin from "../../Components/superadmin/auth/VerifyOTPSuperAdmin";
 import { useNavigate } from "react-router-dom";

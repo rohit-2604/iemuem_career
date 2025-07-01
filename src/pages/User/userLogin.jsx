@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 // import Digilocker from "../../assets/superadmin/digilocker.png";
 import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
-import bgImage from '../../assets/user/UserSignIn.png'
+import bgImage from '../../assets/UserSignIn.png'
 
 function userLogin() {
     const [email, setEmail] = useState("");

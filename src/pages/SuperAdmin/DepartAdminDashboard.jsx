@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, UserRoundPen } from "lucide-react";
-import user from "../../assets/superadmin/user1.jpg";
+import user from "../../assets/user1.jpg";
 import DepartmentAdminModal from "../../Components/modals/Department/DepartmentAdminModal";
 import AddDepartmentAdminModal from "../../Components/modals/deptAdmin/AddDepartmentAdminModal";
 import SearchBar from "../../Components/common/SearchBar";
