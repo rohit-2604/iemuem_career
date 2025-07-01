@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import Digilocker from "../../assets/superadmin/digilocker.png";
+// import Digilocker from "../../assets/superadmin/digilocker.png";
 import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
 import bgImage from '../../assets/user/UserSignIn.png'
 
