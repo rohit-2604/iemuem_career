@@ -25,7 +25,7 @@ export default function DepartmentSection() {
             <p className="text-lg font-medium">11</p>
           </div>
         </div>
-        <CreateButton label="Create New Department" url=""/>
+        <CreateButton label="Create New Department" url="/superadmin/departments"/>
       </div>
     </div>
   );

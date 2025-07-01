@@ -22,7 +22,7 @@ export default function RecruitmentFormsSection() {
             <p className="text-lg font-medium">12</p>
           </div>
         </div>
-        <CreateButton label="Create New Form" url=""/>
+        <CreateButton label="Create New Form" url="/superadmin/forms"/>
       </div>
     </div>
   )
