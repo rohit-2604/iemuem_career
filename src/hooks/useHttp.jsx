@@ -15,6 +15,7 @@ export const useHttp = () => {
   const navigate = useNavigate();
 
   const mainURL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  // const mainURL =  "http://iem-uemrecruitementportal-env.eba-bwbtiqmp.ap-south-1.elasticbeanstalk.com/";
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
