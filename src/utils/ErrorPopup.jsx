@@ -1,6 +1,6 @@
 import React from "react";
 import Lottie2 from "react-lottie";
-import ErrorLottie from "../Lottie/errorLottie.json"
+import ErrorLottie from "../lottie/errorLottie.json";
 
 export const ErrorPopup = ({ takeData, setPopupShow }) => {
   const defaultOptions = {
