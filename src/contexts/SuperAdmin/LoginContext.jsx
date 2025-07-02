@@ -21,8 +21,9 @@ export const LoginProvider = ({ children }) => {
     Cookies.remove("role");
 
     // Store new
+    localStorage.setItem("token", token);
     sessionStorage.setItem("token", token);
-    sessionStorage.setItem("role", role);
+    
 
     if (keepLoggedIn) {
       Cookies.set("token", token, { expires: 1 });
