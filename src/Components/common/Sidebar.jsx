@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/iem_logo.png";
-import Cookies from "js-cookie";
 import {
   LayoutGrid,
   Building2,
@@ -88,7 +86,7 @@ export default function Sidebar({ role = "guest" }) {
       <div className="pt-14 flex justify-center items-center">
         {isOpen && (
           <div className="w-40 h-14 flex items-center justify-center">
-            <img src={logo} alt="IEM Logo" className="object-contain" />
+            <img src={"/iem_logo.png"} alt="IEM Logo" className="object-contain" />
           </div>
         )}
       </div>

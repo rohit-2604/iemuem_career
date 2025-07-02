@@ -1,8 +1,4 @@
 import React, { useState } from "react";
-import background from "../../assets/back.png";
-import front from "../../assets/front.png";
-import background2 from "../../assets/background2.png";
-import front2 from "../../assets/front2.png";
 import LogInSuperAdmin from "../../Components/superadmin/auth/LogInSuperAdmin";
 import VerifyOTPSuperAdmin from "../../Components/superadmin/auth/VerifyOTPSuperAdmin";
 import { useNavigate } from "react-router-dom";
@@ -39,14 +35,14 @@ function SuperAdminLogin() {
       {/* Left Side */}
       <div className="hidden lg:flex lg:w-1/2 relative rounded-xl overflow-hidden p-4">
         <img
-          src={step === "otp" ? background2 : background}
+          src={step === "otp" ? "/background2.png" : "/back.png"}
           alt="Background Illustration"
           className="absolute inset-0 w-full h-full object-cover"
           loading="lazy"
         />
         <div className="relative z-10 flex items-center justify-center w-full p-12">
           <img
-            src={step === "otp" ? front2 : front}
+            src={step === "otp" ? "/front2.png" : "/front.png"}
             alt="Front Illustration"
             className="object-contain max-w-[400px] max-h-[400px]"
             loading="lazy"
