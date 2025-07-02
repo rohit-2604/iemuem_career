@@ -7,7 +7,9 @@ function Privacy() {
         Welcome to the Privacy Policy Page
       </h1>
       <p className="text-center text-gray-600 mt-4">
-        This is a placeholder for the privacy policy content. Here you can include details about how user data is collected, used, and protected. It is important to ensure that your privacy policy complies with relevant laws and regulations, such as GDPR or CCPA, depending on your user base.
+        This Page is under construction. We appreciate your patience as we work to improve our privacy policy system.
+        <br />
+        Please stay tuned for updates and new features!
       </p>
     </div>
   )
