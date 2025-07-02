@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Plus, UserRoundPen } from "lucide-react";
-import user from "../../../public/user1.jpg";
 import DepartmentAdminModal from "../../Components/modals/Department/DepartmentAdminModal";
 import AddDepartmentAdminModal from "../../Components/modals/deptAdmin/AddDepartmentAdminModal";
 import SearchBar from "../../Components/common/SearchBar";
+import CreateButton from "../../Components/common/CreateButton";
 import DotSpinner from "../../Components/common/DotSpinner";
 import { useHttp } from "../../hooks/useHttp";
 
@@ -50,7 +50,7 @@ export default function DepartmentAdminDashboard() {
           department: typeof admin.department === "object"
             ? admin.department?.name || "N/A"
             : admin.department || "N/A",
-          avatar: user,
+          avatar: "/user1.jpg",
         }));
 
         setAdminsData(formattedData);
@@ -77,16 +77,11 @@ export default function DepartmentAdminDashboard() {
 
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
           <SearchBar onSearch={(value) => setSearchTerm(value)} />
-          <button
-            onClick={() => {
-              setFormData(initialForm);
-              setIsAddModalOpen(true);
-            }}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Create new Department Admin
-          </button>
+          <CreateButton label="Create new Department Admin" onClick={() => {
+            setFormData(initialForm);
+            setIsAddModalOpen(true);
+          }} />
+
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">

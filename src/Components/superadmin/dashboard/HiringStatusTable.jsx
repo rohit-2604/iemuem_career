@@ -1,6 +1,4 @@
 import { Filter, SlidersHorizontal, Users } from "lucide-react"
-import  user1 from "../../../../public/user1.jpg"
-import  user2 from "../../../../public/user2.jpg"
 
 
 export default function HiringStatusTable() {
@@ -36,7 +34,7 @@ export default function HiringStatusTable() {
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden">
                     <img
-                      src={user1}
+                        src={"/user1.jpg"}
                       alt="Ayush Ghoshal"
                       width={32}
                       height={32}
@@ -66,7 +64,7 @@ export default function HiringStatusTable() {
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden">
                     <img
-                      src={user2}
+                      src={"/user2.jpg"}
                       alt="Biswadip Saha"
                       width={32}
                       height={32}
