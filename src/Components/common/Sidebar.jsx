@@ -25,14 +25,14 @@ export default function Sidebar({ role = "guest" }) {
     localStorage.clear();
     sessionStorage.clear();
 
-    document.cookie.split(";").forEach(cookie => {
+    document.cookie.split(";").forEach((cookie) => {
       const name = cookie.split("=")[0].trim();
       const domains = [
         "",
         window.location.hostname,
         `.${window.location.hostname.replace(/^www\./, "")}`,
       ];
-      domains.forEach(domain => {
+      domains.forEach((domain) => {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain};`;
       });
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
@@ -45,8 +45,8 @@ export default function Sidebar({ role = "guest" }) {
     superadmin: [
       { to: "/superadmin/dashboard", icon: LayoutGrid, label: "Dashboard" },
       { to: "/superadmin/departments", icon: Building2, label: "Departments" },
-      { to: "/superadmin/forms", icon: FileText, label: "Forms" },
       { to: "/superadmin/dept_admin", icon: ShieldUser, label: "Dept. Admin" },
+      { to: "/superadmin/forms", icon: FileText, label: "Forms" },
       { to: "/superadmin/notifications", icon: Bell, label: "Notifications" },
       { to: "/superadmin/settings", icon: Settings, label: "Settings" },
     ],
@@ -86,7 +86,11 @@ export default function Sidebar({ role = "guest" }) {
       <div className="pt-14 flex justify-center items-center">
         {isOpen && (
           <div className="w-40 h-14 flex items-center justify-center">
-            <img src={"/iem_logo.png"} alt="IEM Logo" className="object-contain" />
+            <img
+              src={"/iem_logo.png"}
+              alt="IEM Logo"
+              className="object-contain"
+            />
           </div>
         )}
       </div>
@@ -103,9 +107,20 @@ export default function Sidebar({ role = "guest" }) {
         {isOpen && (
           <h3 className="text-xs text-gray-400 mb-2 px-2">Help & Support</h3>
         )}
-        {navLink("#support", HelpCircle, "Support", isOpen)}
-        {navLink("#privacy", Shield, "Privacy Policy", isOpen)}
-        {navLink("#feedback", ThumbsUp, "Feedback", isOpen)}
+        {["/support", "/privacy", "/feedback"].map((path, index) => (
+          <div key={index} className="relative group">
+            {navLink(
+              `/superadmin${path}`,
+              index === 0 ? HelpCircle : index === 1 ? Shield : ThumbsUp,
+              index === 0
+                ? "Support"
+                : index === 1
+                ? "Privacy"
+                : "Feedback",
+              isOpen
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Logout Button */}
@@ -131,8 +146,7 @@ export default function Sidebar({ role = "guest" }) {
 
 // ✅ Updated navLink helper
 function navLink(to, Icon, label, isOpen, currentPath = "") {
-  const isActive =
-    currentPath === to || currentPath.startsWith(to + "/");
+  const isActive = currentPath === to || currentPath.startsWith(to + "/");
 
   return (
     <div key={to} className="relative group">

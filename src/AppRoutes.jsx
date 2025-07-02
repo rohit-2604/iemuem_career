@@ -14,6 +14,9 @@ import ResetPassword from "./pages/User/resetPassword"
 // SuperAdmin pages
 import SuperAdminDashboard from "./pages/SuperAdmin/Dashboard";
 import SuperAdminForms from "./pages/SuperAdmin/Forms";
+import Support from "./Components/common/Support";
+import Privacy from "./Components/common/Privacy";
+import Feedback from "./Components/common/Feedback";
 
 // Moderator pages
 import ModeratorDashboard from "./pages/Admin/Dashboard";
@@ -23,6 +26,9 @@ import UserDashboard from "./pages/User/Dashboard";
 import Departments from "./pages/SuperAdmin/Departments";
 import DepartmentAdminDashboard from "./pages/SuperAdmin/DepartAdminDashboard";
 import CreateJobForm from "./Components/superadmin/forms/CreateJobForm";
+import Notifications from "./Components/common/Notifications";
+import Settings from "./Components/common/Settings";
+
 
 function AppRoutes() {
   return (
@@ -44,6 +50,11 @@ function AppRoutes() {
         <Route path="forms" element={<SuperAdminForms />} />
         <Route path="/superadmin/forms/create-job" element={<CreateJobForm />} />
         <Route path="dept_admin" element={<DepartmentAdminDashboard />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="support" element={<Support />} />
+        <Route path="privacy" element={<Privacy />} />
+        <Route path="feedback" element={<Feedback />} />
       </Route>
 
       {/* Moderator routes */}
