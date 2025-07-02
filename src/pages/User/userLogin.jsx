@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
 
-function userLogin() {
+function UserLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -27,24 +27,40 @@ function userLogin() {
 
         if (!response.success) {
             setError(response.message || "Login failed");
-            navigate("/user/login");
             return;
         }
 
         if (response.updatePassword) {
             navigate("/update-password", { state: { role: "user" } });
         } else {
+            // Store the tokens in both localStorage and sessionStorage
+            if (response.tokens) {
+                const { accessToken, refreshToken } = response.tokens;
+
+                // Storing tokens in both localStorage and sessionStorage
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
+
+                sessionStorage.setItem("accessToken", accessToken);
+                sessionStorage.setItem("refreshToken", refreshToken);
+            }
+
             navigate("/user/dashboard");
         }
     };
 
     return (
-        <div className='"bg-[#f3f3f3] h-screen w-full flex items-center justify-center lg:px-[6%] p-[20px]'>
-            <div className='hidden lg:flex lg:w-1/2'>
-                <img src={"/UserSignIn.png"} alt="Illustration" className='w-full h-full object-cover' loading="lazy" />
+        <div className="bg-[#f3f3f3] h-screen w-full flex items-center justify-center lg:px-[6%] p-[20px]">
+            <div className="hidden lg:flex lg:w-1/2">
+                <img
+                    src={"/UserSignIn.png"}
+                    alt="Illustration"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                />
             </div>
-            <div className='lg:w-1/2 bg-white rounded-2xl shadow-2xl'>
-                <div className='w-full h-full flex flex-col items-center justify-center p-[30px] md:p-[50px] lg:py-[80px] urbanist'>
+            <div className="lg:w-1/2 bg-white rounded-2xl shadow-2xl">
+                <div className="w-full h-full flex flex-col items-center justify-center p-[30px] md:p-[50px] lg:py-[80px] urbanist">
                     <div className="w-full max-w-lg space-y-8">
                         <div className="text-center w-full">
                             <h1 className="text-4xl font-bold">
@@ -56,7 +72,10 @@ function userLogin() {
                         </div>
                         <form className="space-y-4 inter" onSubmit={handleSubmit}>
                             <div>
-                                <label htmlFor="email" className="block text-xs font-medium text-gray-700 mb-1">
+                                <label
+                                    htmlFor="email"
+                                    className="block text-xs font-medium text-gray-700 mb-1"
+                                >
                                     Email
                                 </label>
                                 <input
@@ -71,7 +90,10 @@ function userLogin() {
                             </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-xs font-medium text-gray-700 mb-1">
+                                <label
+                                    htmlFor="password"
+                                    className="block text-xs font-medium text-gray-700 mb-1"
+                                >
                                     Password
                                 </label>
                                 <div className="relative">
@@ -97,18 +119,6 @@ function userLogin() {
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex items-center">
-                                <input
-                                    id="keep-logged-in"
-                                    type="checkbox"
-                                    checked={keepLoggedIn}
-                                    onChange={(e) => setKeepLoggedIn(e.target.checked)}
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                />
-                                <label htmlFor="keep-logged-in" className="ml-2 block text-base text-[#232323] inter">
-                                    Keep me logged in
-                                </label>
-                            </div>
 
                             {error && <p className="text-red-600 text-sm">{error}</p>}
 
@@ -118,32 +128,14 @@ function userLogin() {
                             >
                                 Sign in
                             </button>
-                            {/* <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300" />
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-gray-50 text-gray-500">or</span>
-                        </div>
-                        </div>
 
-                        <button
-                        type="button"
-                        className="w-full border border-gray-300 bg-white hover:bg-gray-50 text-black font-medium py-2 px-4 rounded-md transition duration-200 flex items-center justify-center space-x-2"
-                        >
-                        <span>Sign in with</span>
-                        <img
-                            src={Digilocker}
-                            alt="Digilocker Logo"
-                            className="h-5"
-                            style={{ width: "80px", height: "20px" }}
-                            loading="lazy"
-                        />
-                        </button> */}
                             <div className="text-center inter">
                                 <p className="text-base text-[#6C6C6C]">
                                     Don't have an account?{" "}
-                                    <a href="/user/register" className="text-[#367AFF] hover:text-blue-600 font-medium text-base">
+                                    <a
+                                        href="/user/register"
+                                        className="text-[#367AFF] hover:text-blue-600 font-medium text-base"
+                                    >
                                         Create one
                                     </a>
                                 </p>
@@ -153,7 +145,7 @@ function userLogin() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default userLogin
+export default UserLogin;

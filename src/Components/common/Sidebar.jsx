@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -49,6 +50,7 @@ export default function Sidebar({ role = "guest" }) {
       { to: "/superadmin/forms", icon: FileText, label: "Forms" },
       { to: "/superadmin/notifications", icon: Bell, label: "Notifications" },
       { to: "/superadmin/settings", icon: Settings, label: "Settings" },
+
     ],
     moderator: [
       { to: "/moderator/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -65,17 +67,40 @@ export default function Sidebar({ role = "guest" }) {
 
   const currentNav = navItems[role] || [];
 
+  // Helper function to generate nav links
+  const navLink = (to, Icon, label, isOpen, currentPath = "") => {
+    const isActive = currentPath === to || currentPath.startsWith(to + "/");
+
+    return (
+      <div key={to} className="relative group">
+        <Link
+          to={to}
+          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+            ${isActive
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"}
+            ${!isOpen ? "justify-center" : ""}
+          `}
+        >
+          <Icon className="h-5 w-5" />
+          {isOpen && <span>{label}</span>}
+        </Link>
+        {!isOpen && (
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+            {label}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
-      className={`relative ${
-        isOpen ? "w-[220px]" : "w-[72px]"
-      } bg-black text-white flex flex-col h-screen sticky top-0 transition-all duration-300`}
+      className={`relative ${isOpen ? "w-[220px]" : "w-[72px]"} bg-black text-white flex flex-col h-screen sticky top-0 transition-all duration-300`}
     >
       {/* Toggle Button */}
       <div
-        className={`absolute top-4 ${
-          isOpen ? "left-4" : "left-1/2 -translate-x-1/2"
-        } z-20 transition-all duration-300`}
+        className={`absolute top-4 ${isOpen ? "left-4" : "left-1/2 -translate-x-1/2"} z-20 transition-all duration-300`}
       >
         <button onClick={toggleSidebar} className="text-white">
           <Menu size={22} />
@@ -86,11 +111,7 @@ export default function Sidebar({ role = "guest" }) {
       <div className="pt-14 flex justify-center items-center">
         {isOpen && (
           <div className="w-40 h-14 flex items-center justify-center">
-            <img
-              src={"/iem_logo.png"}
-              alt="IEM Logo"
-              className="object-contain"
-            />
+            <img src={"/iem_logo.png"} alt="IEM Logo" className="object-contain" />
           </div>
         )}
       </div>
@@ -102,26 +123,140 @@ export default function Sidebar({ role = "guest" }) {
         )}
       </nav>
 
-      {/* Help Section */}
-      <div className={`px-2 pt-3 ${isOpen ? "border-t border-gray-800" : ""}`}>
-        {isOpen && (
-          <h3 className="text-xs text-gray-400 mb-2 px-2">Help & Support</h3>
+      {/* Help Section - Always appear but not repeated */}
+{/* Help Section - Always appear but not repeated */}
+<div className={`px-2 pt-3 ${isOpen ? "border-t border-gray-800" : ""}`}>
+  {isOpen && (
+    <h3 className="text-xs text-gray-400 mb-2 px-2">Help & Support</h3>
+  )}
+
+  {/* Display different links based on the role */}
+  {role === "superadmin" && (
+    <>
+      <div className="relative group">
+        <Link
+          to="/superadmin/support"
+          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+            ${location.pathname === "/superadmin/support" || location.pathname.startsWith("/superadmin/support")
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"}
+            ${!isOpen ? "justify-center" : ""}
+          `}
+        >
+          <HelpCircle className="h-5 w-5" />
+          {isOpen && <span>Support</span>}
+        </Link>
+        {!isOpen && (
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+            Support
+          </span>
         )}
-        {["/support", "/privacy", "/feedback"].map((path, index) => (
-          <div key={index} className="relative group">
-            {navLink(
-              `/superadmin${path}`,
-              index === 0 ? HelpCircle : index === 1 ? Shield : ThumbsUp,
-              index === 0
-                ? "Support"
-                : index === 1
-                ? "Privacy"
-                : "Feedback",
-              isOpen
-            )}
-          </div>
-        ))}
       </div>
+      <div className="relative group">
+        <Link
+          to="/superadmin/privacy"
+          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+            ${location.pathname === "/superadmin/privacy" || location.pathname.startsWith("/superadmin/privacy")
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"}
+            ${!isOpen ? "justify-center" : ""}
+          `}
+        >
+          <Shield className="h-5 w-5" />
+          {isOpen && <span>Privacy</span>}
+        </Link>
+        {!isOpen && (
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+            Privacy
+          </span>
+        )}
+      </div>
+      <div className="relative group">
+        <Link
+          to="/superadmin/feedback"
+          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+            ${location.pathname === "/superadmin/feedback" || location.pathname.startsWith("/superadmin/feedback")
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"}
+            ${!isOpen ? "justify-center" : ""}
+          `}
+        >
+          <ThumbsUp className="h-5 w-5" />
+          {isOpen && <span>Feedback</span>}
+        </Link>
+        {!isOpen && (
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+            Feedback
+          </span>
+        )}
+      </div>
+    </>
+  )}
+
+  {/* User Role Help Section */}
+  {role === "user" && (
+    <>
+      <div className="relative group">
+        <Link
+          to="/user/support"
+          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+            ${location.pathname === "/user/support" || location.pathname.startsWith("/user/support")
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"}
+            ${!isOpen ? "justify-center" : ""}
+          `}
+        >
+          <HelpCircle className="h-5 w-5" />
+          {isOpen && <span>Support</span>}
+        </Link>
+        {!isOpen && (
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+            Support
+          </span>
+        )}
+      </div>
+      <div className="relative group">
+        <Link
+          to="/user/privacy"
+          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+            ${location.pathname === "/user/privacy" || location.pathname.startsWith("/user/privacy")
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"}
+            ${!isOpen ? "justify-center" : ""}
+          `}
+        >
+          <Shield className="h-5 w-5" />
+          {isOpen && <span>Privacy</span>}
+        </Link>
+        {!isOpen && (
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+            Privacy
+          </span>
+        )}
+      </div>
+      <div className="relative group">
+        <Link
+          to="/user/feedback"
+          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+            ${location.pathname === "/user/feedback" || location.pathname.startsWith("/user/feedback")
+              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+              : "text-gray-300 hover:bg-gray-800"}
+            ${!isOpen ? "justify-center" : ""}
+          `}
+        >
+          <ThumbsUp className="h-5 w-5" />
+          {isOpen && <span>Feedback</span>}
+        </Link>
+        {!isOpen && (
+          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
+            Feedback
+          </span>
+        )}
+      </div>
+    </>
+  )}
+</div>
+
 
       {/* Logout Button */}
       <div className="p-2">
@@ -140,35 +275,6 @@ export default function Sidebar({ role = "guest" }) {
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-// ✅ Updated navLink helper
-function navLink(to, Icon, label, isOpen, currentPath = "") {
-  const isActive = currentPath === to || currentPath.startsWith(to + "/");
-
-  return (
-    <div key={to} className="relative group">
-      <Link
-        to={to}
-        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-          ${
-            isActive
-              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"
-          }
-          ${!isOpen ? "justify-center" : ""}
-        `}
-      >
-        <Icon className="h-5 w-5" />
-        {isOpen && <span>{label}</span>}
-      </Link>
-      {!isOpen && (
-        <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
-          {label}
-        </span>
-      )}
     </div>
   );
 }
