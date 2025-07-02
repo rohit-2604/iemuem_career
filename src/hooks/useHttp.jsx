@@ -14,8 +14,8 @@ export const useHttp = () => {
   const { showErrorPopup } = useErrorHandle() || {};
   const navigate = useNavigate();
 
-  // const mainURL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-  const mainURL =  "https://iemuemrecruitmentportal.iem.edu.in";
+  const mainURL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  // const mainURL =  "https://iemuemrecruitmentportal.iem.edu.in";
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
