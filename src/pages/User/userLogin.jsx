@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-// import Digilocker from "../../assets/superadmin/digilocker.png";
 import { useLogin } from "../../contexts/SuperAdmin/LoginContext";
-import bgImage from '../../assets/UserSignIn.png'
 
 function userLogin() {
     const [email, setEmail] = useState("");
@@ -43,7 +41,7 @@ function userLogin() {
     return (
         <div className='"bg-[#f3f3f3] h-screen w-full flex items-center justify-center lg:px-[6%] p-[20px]'>
             <div className='hidden lg:flex lg:w-1/2'>
-                <img src={bgImage} alt="Illustration" className='w-full h-full object-cover' loading="lazy" />
+                <img src={"/UserSignIn.png"} alt="Illustration" className='w-full h-full object-cover' loading="lazy" />
             </div>
             <div className='lg:w-1/2 bg-white rounded-2xl shadow-2xl'>
                 <div className='w-full h-full flex flex-col items-center justify-center p-[30px] md:p-[50px] lg:py-[80px] urbanist'>
