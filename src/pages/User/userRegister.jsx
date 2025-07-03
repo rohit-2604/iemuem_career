@@ -8,8 +8,6 @@ function userRegister() {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [phoneNo, setPhoneNo] = useState("");
-    const [DOB, setDOB] = useState("");
-    const [address, setAddress] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -36,8 +34,6 @@ function userRegister() {
                 fullName: name,
                 email,
                 phoneNo,
-                DOB,
-                address,
                 password
 
             });
