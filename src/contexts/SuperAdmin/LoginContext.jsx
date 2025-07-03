@@ -49,7 +49,7 @@ export const LoginProvider = ({ children }) => {
         token = raw;
         raw = {};
       } else {
-        token = raw?.token || raw?.accessToken;
+        token = raw?.token || raw?.token;
       }
 
       if (!token) {
