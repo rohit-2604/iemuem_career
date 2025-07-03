@@ -15,7 +15,8 @@ export default function DepartmentAdminDashboard() {
     adminId: "",
     phone: "",
     email: "",
-    department: "",
+    departmentId: "",
+    departmentName: "",
     departmentCodes: ["", "", ""],
   };
 
@@ -26,48 +27,112 @@ export default function DepartmentAdminDashboard() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
-  const [loading, setLoading] = useState(true);  // <-- added loading state
+  const [loading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState([]); // Departments state
 
   const resetForm = () => setFormData(initialForm);
 
+  // Function to update the admins list after a new admin is added
+  const updateAdminsList = (newAdminResponse) => {
+    // Format the new admin data to match the existing structure
+    const formattedNewAdmin = {
+      adminId: newAdminResponse._id,
+      name: newAdminResponse.name || "N/A",
+      phone: newAdminResponse.phoneNo,
+      email: newAdminResponse.email,
+      departmentId: newAdminResponse.department?._id || newAdminResponse.department || "N/A",
+      departmentName: newAdminResponse.department?.name || "N/A",
+      avatar: newAdminResponse.avatar || "/user1.jpg",
+      departmentCodes: newAdminResponse.departmentCodes || ["", "", ""],
+    };
+
+    setAdminsData((prevAdmins) => [...prevAdmins, formattedNewAdmin]);
+  };
+
+  // Function to handle admin editing
+  const handleEditAdmin = (admin) => {
+    setSelectedAdmin(admin);
+    setIsEditModalOpen(true);
+  };
+
+  // Function to refresh the entire admins list
+  const refreshAdminsList = async () => {
+    setLoading(true);
+    try {
+      const response = await getReq("/api/v1/departmentadmin/getAllDepartmentAdmins");
+
+      const adminsArray = Array.isArray(response?.data)
+        ? response.data
+        : response?.data?.admins || [];
+
+      const formattedData = adminsArray.map((admin) => ({
+        adminId: admin._id,
+        name: admin.name || "N/A",
+        phone: admin.phoneNo,
+        email: admin.email,
+        departmentId: admin.department?._id || "N/A",
+        departmentName: admin.department?.name || "N/A",
+        avatar: admin.avatar || "/user1.jpg",
+        departmentCodes: admin.departmentCodes || ["", "", ""],
+      }));
+
+      setAdminsData(formattedData);
+    } catch (error) {
+      console.error("Failed to refresh department admins:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchAdmins = async () => {
-      setLoading(true);  // <-- start loading
+      setLoading(true);
       try {
         const response = await getReq("/api/v1/departmentadmin/getAllDepartmentAdmins");
-
-        console.log("API raw response:", response);
 
         const adminsArray = Array.isArray(response?.data)
           ? response.data
           : response?.data?.admins || [];
 
         const formattedData = adminsArray.map((admin) => ({
-          adminId: admin._id,
-          name: admin.name,
+          adminId: admin._id, // Store adminId
+          name: admin.name || "N/A", // Ensure name is not null or undefined
           phone: admin.phoneNo,
           email: admin.email,
-          department: typeof admin.department === "object"
-            ? admin.department?.name || "N/A"
-            : admin.department || "N/A",
-          avatar: "/user1.jpg",
+          departmentId: admin.department?._id || "N/A", // Correctly map departmentId
+          departmentName: admin.department?.name || "N/A", // Correctly map departmentName
+          avatar: admin.avatar || "/user1.jpg", // Ensure avatar is always set
+          departmentCodes: admin.departmentCodes || ["", "", ""], // Ensure department codes are set if available
         }));
 
         setAdminsData(formattedData);
       } catch (error) {
         console.error("Failed to fetch department admins:", error);
       } finally {
-        setLoading(false); // <-- done loading
+        setLoading(false);
       }
     };
 
     fetchAdmins();
   }, []);
 
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await getReq("/api/v1/department/getAllDepartments");
+        setDepartments(response?.data || []);
+      } catch (error) {
+        console.error("Failed to fetch departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
+
   const filteredAdmins = adminsData.filter(
     (admin) =>
       admin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      admin.department.toLowerCase().includes(searchTerm.toLowerCase())
+      admin.departmentName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -81,7 +146,6 @@ export default function DepartmentAdminDashboard() {
             setFormData(initialForm);
             setIsAddModalOpen(true);
           }} />
-
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
@@ -104,7 +168,7 @@ export default function DepartmentAdminDashboard() {
             ) : filteredAdmins.length > 0 ? (
               filteredAdmins.map((admin, index) => (
                 <div
-                  key={admin.adminId}
+                  key={admin.adminId || index} // Ensuring unique key using adminId or index
                   className="grid grid-cols-12 gap-4 items-center text-sm bg-white hover:bg-gray-50 px-2 py-3 border-t border-gray-200"
                 >
                   <div className="col-span-1 text-gray-600">
@@ -112,7 +176,7 @@ export default function DepartmentAdminDashboard() {
                   </div>
                   <div className="col-span-2">
                     <span className="bg-gray-100 px-2 py-1 rounded font-mono text-gray-700 text-sm">
-                      {admin.adminId.slice(0, 8)}
+                      {admin.adminId ? admin.adminId.slice(0, 8) : "N/A"}
                     </span>
                   </div>
                   <div className="col-span-4 flex items-center gap-3">
@@ -126,7 +190,7 @@ export default function DepartmentAdminDashboard() {
                     </span>
                   </div>
                   <div className="col-span-3 text-gray-600">
-                    {admin.department}
+                    {admin.departmentName}
                   </div>
                   <div className="col-span-2 flex justify-center gap-2">
                     <button
@@ -137,14 +201,7 @@ export default function DepartmentAdminDashboard() {
                     </button>
 
                     <button
-                      onClick={() => {
-                        setSelectedAdmin({
-                          ...initialForm,
-                          ...admin,
-                          departmentCodes: ["", "", ""],
-                        });
-                        setIsEditModalOpen(true);
-                      }}
+                      onClick={() => handleEditAdmin(admin)}
                       className="text-sm px-3 py-1 flex items-center gap-1 bg-[#e8e8e8] text-black rounded hover:bg-gray-300 transition"
                     >
                       <UserRoundPen className="w-4 h-4" />
@@ -193,6 +250,8 @@ export default function DepartmentAdminDashboard() {
           focusedField={focusedField}
           setFocusedField={setFocusedField}
           onClose={() => setIsAddModalOpen(false)}
+          updateAdminsList={updateAdminsList}
+          refreshAdminsList={refreshAdminsList}
         />
       )}
     </div>

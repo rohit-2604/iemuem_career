@@ -91,9 +91,9 @@ function VerifyOTPSuperAdmin({ email, password, onSuccess }) {
                     console.log("Role:", role); // Log the role
                     
                     // Save the access token and role in localStorage and sessionStorage
-                    localStorage.setItem('accessToken', accessToken);
+                    // localStorage.setItem('accessToken', accessToken);
                     localStorage.setItem('role', role); // Save role properly
-                    sessionStorage.setItem('accessToken', accessToken);
+                    // sessionStorage.setItem('accessToken', accessToken);
                     sessionStorage.setItem('role', role); // Save role in lowercase
 
                     // Call the onSuccess callback with the necessary data
