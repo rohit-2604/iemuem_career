@@ -120,7 +120,7 @@ export default function AddDepartmentAdminModal({
     } catch (error) {
       console.error("Error registering admin:", error);
       
-      // Better error handling
+
       if (error.response?.data?.message) {
         alert(`Error: ${error.response.data.message}`);
       } else {
@@ -131,7 +131,7 @@ export default function AddDepartmentAdminModal({
     }
   };
 
-  // Handle modal close with confirmation if form has data
+
   const handleClose = () => {
     const hasFormData = formData.name || formData.email || formData.phone || formData.departmentId;
     
