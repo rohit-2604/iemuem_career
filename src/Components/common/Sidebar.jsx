@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutGrid,
@@ -16,9 +15,16 @@ import {
   ShieldUser,
 } from "lucide-react";
 
-export default function Sidebar({ role = "guest" }) {
+export default function Sidebar() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(true);
+  const [role, setRole] = useState(""); // State for role
+
+  useEffect(() => {
+    // Get the role from localStorage on component mount
+    const storedRole = localStorage.getItem("role");
+    setRole(storedRole || "guest"); // Default to "guest" if no role is found
+  }, []);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -26,6 +32,7 @@ export default function Sidebar({ role = "guest" }) {
     localStorage.clear();
     sessionStorage.clear();
 
+    // Clear cookies
     document.cookie.split(";").forEach((cookie) => {
       const name = cookie.split("=")[0].trim();
       const domains = [
@@ -43,14 +50,13 @@ export default function Sidebar({ role = "guest" }) {
   };
 
   const navItems = {
-    superadmin: [
+    SuperAdmin: [
       { to: "/superadmin/dashboard", icon: LayoutGrid, label: "Dashboard" },
       { to: "/superadmin/departments", icon: Building2, label: "Departments" },
       { to: "/superadmin/dept_admin", icon: ShieldUser, label: "Dept. Admin" },
       { to: "/superadmin/forms", icon: FileText, label: "Forms" },
       { to: "/superadmin/notifications", icon: Bell, label: "Notifications" },
       { to: "/superadmin/settings", icon: Settings, label: "Settings" },
-
     ],
     moderator: [
       { to: "/moderator/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -78,9 +84,7 @@ export default function Sidebar({ role = "guest" }) {
           className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
             ${isActive
               ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"}
-            ${!isOpen ? "justify-center" : ""}
-          `}
+              : "text-gray-300 hover:bg-gray-800"}`}
         >
           <Icon className="h-5 w-5" />
           {isOpen && <span>{label}</span>}
@@ -123,140 +127,94 @@ export default function Sidebar({ role = "guest" }) {
         )}
       </nav>
 
-      {/* Help Section - Always appear but not repeated */}
-{/* Help Section - Always appear but not repeated */}
-<div className={`px-2 pt-3 ${isOpen ? "border-t border-gray-800" : ""}`}>
-  {isOpen && (
-    <h3 className="text-xs text-gray-400 mb-2 px-2">Help & Support</h3>
-  )}
+      {/* Help Section */}
+      <div className={`px-2 pt-3 ${isOpen ? "border-t border-gray-800" : ""}`}>
+        {isOpen && <h3 className="text-xs text-gray-400 mb-2 px-2">Help & Support</h3>}
 
-  {/* Display different links based on the role */}
-  {role === "superadmin" && (
-    <>
-      <div className="relative group">
-        <Link
-          to="/superadmin/support"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-            ${location.pathname === "/superadmin/support" || location.pathname.startsWith("/superadmin/support")
-              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"}
-            ${!isOpen ? "justify-center" : ""}
-          `}
-        >
-          <HelpCircle className="h-5 w-5" />
-          {isOpen && <span>Support</span>}
-        </Link>
-        {!isOpen && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
-            Support
-          </span>
+        {/* Superadmin Role Help Section */}
+        {role === "SuperAdmin" && (
+          <>
+            <div className="relative group">
+              <Link
+                to="/superadmin/support"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+                  ${location.pathname === "/superadmin/support" || location.pathname.startsWith("/superadmin/support")
+                    ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+                    : "text-gray-300 hover:bg-gray-800"}`}
+              >
+                <HelpCircle className="h-5 w-5" />
+                {isOpen && <span>Support</span>}
+              </Link>
+            </div>
+            <div className="relative group">
+              <Link
+                to="/superadmin/privacy"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+                  ${location.pathname === "/superadmin/privacy" || location.pathname.startsWith("/superadmin/privacy")
+                    ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+                    : "text-gray-300 hover:bg-gray-800"}`}
+              >
+                <Shield className="h-5 w-5" />
+                {isOpen && <span>Privacy</span>}
+              </Link>
+            </div>
+            <div className="relative group">
+              <Link
+                to="/superadmin/feedback"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+                  ${location.pathname === "/superadmin/feedback" || location.pathname.startsWith("/superadmin/feedback")
+                    ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+                    : "text-gray-300 hover:bg-gray-800"}`}
+              >
+                <ThumbsUp className="h-5 w-5" />
+                {isOpen && <span>Feedback</span>}
+              </Link>
+            </div>
+          </>
         )}
-      </div>
-      <div className="relative group">
-        <Link
-          to="/superadmin/privacy"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-            ${location.pathname === "/superadmin/privacy" || location.pathname.startsWith("/superadmin/privacy")
-              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"}
-            ${!isOpen ? "justify-center" : ""}
-          `}
-        >
-          <Shield className="h-5 w-5" />
-          {isOpen && <span>Privacy</span>}
-        </Link>
-        {!isOpen && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
-            Privacy
-          </span>
-        )}
-      </div>
-      <div className="relative group">
-        <Link
-          to="/superadmin/feedback"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-            ${location.pathname === "/superadmin/feedback" || location.pathname.startsWith("/superadmin/feedback")
-              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"}
-            ${!isOpen ? "justify-center" : ""}
-          `}
-        >
-          <ThumbsUp className="h-5 w-5" />
-          {isOpen && <span>Feedback</span>}
-        </Link>
-        {!isOpen && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
-            Feedback
-          </span>
-        )}
-      </div>
-    </>
-  )}
 
-  {/* User Role Help Section */}
-  {role === "user" && (
-    <>
-      <div className="relative group">
-        <Link
-          to="/user/support"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-            ${location.pathname === "/user/support" || location.pathname.startsWith("/user/support")
-              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"}
-            ${!isOpen ? "justify-center" : ""}
-          `}
-        >
-          <HelpCircle className="h-5 w-5" />
-          {isOpen && <span>Support</span>}
-        </Link>
-        {!isOpen && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
-            Support
-          </span>
+        {/* User Role Help Section */}
+        {role === "user" && (
+          <>
+            <div className="relative group">
+              <Link
+                to="/user/support"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+                  ${location.pathname === "/user/support" || location.pathname.startsWith("/user/support")
+                    ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+                    : "text-gray-300 hover:bg-gray-800"}`}
+              >
+                <HelpCircle className="h-5 w-5" />
+                {isOpen && <span>Support</span>}
+              </Link>
+            </div>
+            <div className="relative group">
+              <Link
+                to="/user/privacy"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+                  ${location.pathname === "/user/privacy" || location.pathname.startsWith("/user/privacy")
+                    ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+                    : "text-gray-300 hover:bg-gray-800"}`}
+              >
+                <Shield className="h-5 w-5" />
+                {isOpen && <span>Privacy</span>}
+              </Link>
+            </div>
+            <div className="relative group">
+              <Link
+                to="/user/feedback"
+                className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
+                  ${location.pathname === "/user/feedback" || location.pathname.startsWith("/user/feedback")
+                    ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
+                    : "text-gray-300 hover:bg-gray-800"}`}
+              >
+                <ThumbsUp className="h-5 w-5" />
+                {isOpen && <span>Feedback</span>}
+              </Link>
+            </div>
+          </>
         )}
       </div>
-      <div className="relative group">
-        <Link
-          to="/user/privacy"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-            ${location.pathname === "/user/privacy" || location.pathname.startsWith("/user/privacy")
-              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"}
-            ${!isOpen ? "justify-center" : ""}
-          `}
-        >
-          <Shield className="h-5 w-5" />
-          {isOpen && <span>Privacy</span>}
-        </Link>
-        {!isOpen && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
-            Privacy
-          </span>
-        )}
-      </div>
-      <div className="relative group">
-        <Link
-          to="/user/feedback"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all relative
-            ${location.pathname === "/user/feedback" || location.pathname.startsWith("/user/feedback")
-              ? "bg-blue-600 text-white before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-white before:rounded-r"
-              : "text-gray-300 hover:bg-gray-800"}
-            ${!isOpen ? "justify-center" : ""}
-          `}
-        >
-          <ThumbsUp className="h-5 w-5" />
-          {isOpen && <span>Feedback</span>}
-        </Link>
-        {!isOpen && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 rounded bg-gray-900 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-lg">
-            Feedback
-          </span>
-        )}
-      </div>
-    </>
-  )}
-</div>
-
 
       {/* Logout Button */}
       <div className="p-2">

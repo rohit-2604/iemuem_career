@@ -17,9 +17,8 @@ export const LoginProvider = ({ children }) => {
     sessionStorage.removeItem("token");
 
     // Store new
-    localStorage.setItem("token", token);
-    sessionStorage.setItem("token", token);
-    sessionStorage.setItem("role", role); // Store role in sessionStorage
+
+; // Store role in sessionStorage
 
     setAuthToken(token);
     setUserRole(role);
