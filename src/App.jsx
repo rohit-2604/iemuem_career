@@ -38,9 +38,9 @@ function App() {
         <LoginProvider>
           <div className="bg-[#F3F3F3] min-h-screen">
             <ErrorBoundary>
-              <React.Suspense fallback={<div>Loading...</div>}>
+              {/* <React.Suspense fallback={<div>Loading...</div>}>
+              </React.Suspense> */}
                 <AppRoutes />
-              </React.Suspense>
             </ErrorBoundary>
           </div>
         </LoginProvider>
