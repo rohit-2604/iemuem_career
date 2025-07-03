@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useHttp } from '../../../hooks/useHttp';
 import DotSpinner from '../../common/DotSpinner';
 
-function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
+function VerifyOTPSuperAdmin({ email, password, onSuccess }) {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [timer, setTimer] = useState(30);
     const [resending, setResending] = useState(false);
@@ -19,13 +19,13 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
     }, [timer]);
 
     const handleChange = (e, idx) => {
-        const val = e.target.value.replace(/\D/, '');
+        const val = e.target.value.replace(/\D/, ''); // Only allow numbers
         if (!val) return;
         const newOtp = [...otp];
         newOtp[idx] = val;
         setOtp(newOtp);
         if (idx < 5 && val) {
-            inputRefs.current[idx + 1]?.focus();
+            inputRefs.current[idx + 1]?.focus(); // Move focus to next input
         }
     };
 
@@ -33,10 +33,10 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
         if (e.key === 'Backspace') {
             if (otp[idx]) {
                 const newOtp = [...otp];
-                newOtp[idx] = '';
+                newOtp[idx] = ''; // Clear the current OTP digit
                 setOtp(newOtp);
             } else if (idx > 0) {
-                inputRefs.current[idx - 1]?.focus();
+                inputRefs.current[idx - 1]?.focus(); // Move focus to previous input
             }
         }
     };
@@ -44,7 +44,7 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
     const handlePaste = (e) => {
         const paste = e.clipboardData.getData('text').slice(0, 6).split('');
         if (paste.length === 6 && paste.every((d) => /\d/.test(d))) {
-            setOtp(paste);
+            setOtp(paste); // Paste the OTP digits directly
             inputRefs.current[5]?.focus();
         }
     };
@@ -55,7 +55,7 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
         try {
             const response = await postReq('/api/v1/superadmin/login', { email, password });
             if (response?.success) {
-                setTimer(30);
+                setTimer(30); // Reset the timer to 30 seconds
             } else {
                 setError(response?.message || 'Failed to resend OTP.');
             }
@@ -79,12 +79,37 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
                 email,
                 otp: otp.join(''),
             });
+
+            console.log("OTP Response:", response); // Log the entire response
+
             if (response?.success && response?.data) {
-                if (onSuccess) onSuccess(response.data, keepLoggedIn);
+                const { accessToken, role } = response.data;
+
+                // Check if role is available
+                if (role) {
+                    console.log("Access Token:", accessToken); // Log the access token
+                    console.log("Role:", role); // Log the role
+                    
+                    // Save the access token and role in localStorage and sessionStorage
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('role', role); // Save role properly
+                    sessionStorage.setItem('accessToken', accessToken);
+                    sessionStorage.setItem('role', role); // Save role in lowercase
+
+                    // Call the onSuccess callback with the necessary data
+                    if (onSuccess) {
+                        console.log("Calling onSuccess with:", accessToken, role);
+                        onSuccess(accessToken, role); 
+                    }
+                } else {
+                    setError('Role not found in response.');
+                }
             } else {
+                console.log("Failed OTP Verification:", response); // Log failure message
                 setError(response?.message || 'OTP verification failed.');
             }
         } catch (err) {
+            console.error("OTP Verification Error:", err); // Log the error in case of failure
             setError('OTP verification failed.');
         } finally {
             setLoading(false);
@@ -109,13 +134,13 @@ function VerifyOTPSuperAdmin({ email, password, keepLoggedIn, onSuccess }) {
                         {otp.map((digit, idx) => (
                             <input
                                 key={idx}
-                                ref={el => inputRefs.current[idx] = el}
+                                ref={(el) => (inputRefs.current[idx] = el)}
                                 type="text"
                                 inputMode="numeric"
                                 maxLength={1}
                                 value={digit}
-                                onChange={e => handleChange(e, idx)}
-                                onKeyDown={e => handleKeyDown(e, idx)}
+                                onChange={(e) => handleChange(e, idx)}
+                                onKeyDown={(e) => handleKeyDown(e, idx)}
                                 className="w-14 h-14 text-2xl text-center border border-gray-200 rounded-lg bg-gray-100 focus:bg-white focus:border-blue-400 focus:outline-none transition"
                                 autoFocus={idx === 0}
                                 disabled={loading}

@@ -7,26 +7,32 @@ function SuperAdminLogin() {
   const [step, setStep] = useState("login"); // 'login' or 'otp'
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const [role, setRole] = useState(""); // Role state to store the user's role
+  const [token, setToken] = useState(""); // Token state to store the user's token
   const navigate = useNavigate();
 
   const handleLoginSuccess = (loginData) => {
     setEmail(loginData.email);
     setPassword(loginData.password);
-    setKeepLoggedIn(loginData.keepLoggedIn);
+    setRole(loginData.role); // Assuming role is part of loginData
     setStep("otp");
   };
 
-  const handleOTPSuccess = (token, keepLoggedInValue) => {
+  const handleOTPSuccess = (receivedToken) => {
+    // Set the token in state
+    setToken(receivedToken);
+
     try {
-      localStorage.setItem("token", token);
-      sessionStorage.setItem("token", token);
-      if (keepLoggedInValue) {
-        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}`;
-      }
+      // Store both token and role in localStorage and sessionStorage
+      localStorage.setItem("token", receivedToken);
+      // localStorage.setItem("role", role); // Now we have both role and token
+      sessionStorage.setItem("token", receivedToken);
+      // sessionStorage.setItem("role", role); // Store role as well
     } catch (storageError) {
       console.error("⚠️ Error storing token:", storageError);
     }
+
+    // Navigate to the dashboard after successful login
     navigate("/superadmin/dashboard");
   };
 
@@ -55,7 +61,11 @@ function SuperAdminLogin() {
         {step === "login" ? (
           <LogInSuperAdmin onLoginSuccess={handleLoginSuccess} />
         ) : (
-          <VerifyOTPSuperAdmin email={email} password={password} keepLoggedIn={keepLoggedIn} onSuccess={(token) => handleOTPSuccess(token, keepLoggedIn)} />
+          <VerifyOTPSuperAdmin
+            email={email}
+            password={password}
+            onSuccess={(receivedToken) => handleOTPSuccess(receivedToken)}
+          />
         )}
       </div>
     </div>
