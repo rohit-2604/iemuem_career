@@ -56,7 +56,7 @@ function userRegister() {
     return (
         <div className='bg-[#f3f3f3] h-screen w-full flex items-center justify-center lg:px-[6%] p-[20px]'>
             <div className='hidden lg:flex lg:w-1/2'>
-                <img src={"/UserSignup.png"} alt="Illustration" className='w-full h-full object-cover' loading="lazy" />
+                <img src="/UserSignUp.png" alt="Illustration" className='w-full h-full object-cover' loading="lazy" />
             </div>
             <div className='lg:w-1/2 bg-white rounded-2xl shadow-2xl'>
                 <div className='w-full h-full flex flex-col items-center justify-center p-[30px] md:p-[50px] lg:py-[60px] urbanist'>
@@ -114,8 +114,7 @@ function userRegister() {
                                     placeholder="Enter your email"
                                 />
                             </div>
-                            <div className="flex gap-4">
-                                <div className="w-1/2">
+                                <div>
                                     <label htmlFor="phone" className="block text-xs font-medium mb-1">
                                         Phone
                                     </label>
@@ -129,38 +128,7 @@ function userRegister() {
                                         placeholder="Enter your phone number"
                                     />
                                 </div>
-                                <div className="w-1/2">
-                                    <label htmlFor="phone" className="block text-xs font-medium mb-1">
-                                        Date of Birth
-                                    </label>
-                                    <input
-                                        id="dob"
-                                        type="date"
-                                        value={DOB}
-                                        onChange={(e) => setDOB(e.target.value)}
-                                        required
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-400"
-                                    />
-                                </div>
-                            </div>
                             <div>
-                                <label htmlFor="password" className="block text-xs font-medium mb-1">
-                                    Address
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        id="address"
-                                        type="text"
-                                        value={address}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Enter your address"
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                            <div className="w-1/2">
                                 <label htmlFor="password" className="block text-xs font-medium mb-1">
                                     Password
                                 </label>
@@ -187,7 +155,7 @@ function userRegister() {
                                     </button>
                                 </div>
                             </div>
-                                <div className="w-1/2">
+                                <div>
                                     <label htmlFor="confirmPassword" className="block text-xs font-medium mb-1">
                                         Confirm Password
                                     </label>
@@ -214,7 +182,6 @@ function userRegister() {
                                         </button>
                                     </div>
                                 </div>
-                            </div>
                             {error && <p className="text-red-600 text-sm">{error}</p>}
                             <div className="flex justify-center">
                             <button
