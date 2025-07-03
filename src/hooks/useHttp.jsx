@@ -14,8 +14,8 @@ export const useHttp = () => {
   const { showErrorPopup } = useErrorHandle() || {};
   const navigate = useNavigate();
 
-  // const mainURL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-  const mainURL =  "https://iemuemrecruitmentportal.iem.edu.in";
+  const mainURL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  // const mainURL =  "https://iemuemrecruitmentportal.iem.edu.in";
 
   const buildUrl = (path) => {
     const trimmedPath = path.startsWith("/") ? path.slice(1) : path;
@@ -68,10 +68,12 @@ export const useHttp = () => {
     try {
       token = token || localStorage.getItem("token") || sessionStorage.getItem("token") || "";
 
-      if (typeof token !== "string") {
-        console.warn("⚠️ Invalid token format:", typeof token, token);
-        token = typeof token === "object" && token?.token ? token.token : "";
-      }
+if (typeof token !== "string") {
+  console.warn("⚠️ Invalid token format:", typeof token, token);
+  // If it's an object and has a 'token' property, extract that as the token
+  token = (typeof token === "object" && token?.token) || "";
+}
+
 
       if (token) headers["Authorization"] = `Bearer ${token}`;
       if (!isFormData && method !== "GET") headers["Content-Type"] = "application/json";

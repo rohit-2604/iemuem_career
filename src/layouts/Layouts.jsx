@@ -9,7 +9,7 @@ export default function Layout() {
     <div className="flex min-h-screen">
       {/* Pass the role from localStorage to Sidebar */}
       <Sidebar role={role} />
-      <main className="flex-1 overflow-y-auto p-4">
+      <main className="flex-1 overflow-y-auto">
         {/* Render the outlet for nested routes */}
         <Outlet />
       </main>
