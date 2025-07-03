@@ -11,24 +11,15 @@ export const LoginProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null);
   const { postReq } = useHttp();
 
-  const storeAuthData = (token, role, keepLoggedIn = false) => {
+  const storeAuthData = (token, role) => {
     // Clear previous
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
-    localStorage.removeItem("role");
-    sessionStorage.removeItem("role");
-    Cookies.remove("token");
-    Cookies.remove("role");
 
     // Store new
     localStorage.setItem("token", token);
     sessionStorage.setItem("token", token);
-    
-
-    if (keepLoggedIn) {
-      Cookies.set("token", token, { expires: 1 });
-      Cookies.set("role", role, { expires: 1 });
-    }
+    sessionStorage.setItem("role", role); // Store role in sessionStorage
 
     setAuthToken(token);
     setUserRole(role);
@@ -40,7 +31,6 @@ export const LoginProvider = ({ children }) => {
     password,
     roleKey,
     extraStorage = {},
-    keepLoggedIn = false,
   }) => {
     try {
       if (!email || !password) {
@@ -67,7 +57,7 @@ export const LoginProvider = ({ children }) => {
         return { success: false, message: "No token received from server" };
       }
 
-      storeAuthData(token, roleKey, keepLoggedIn);
+      storeAuthData(token, roleKey);
 
       const extraData = {};
       Object.entries(extraStorage).forEach(([storageKey, responseKey]) => {
@@ -95,56 +85,50 @@ export const LoginProvider = ({ children }) => {
     }
   };
 
-  const superAdminLogin = (email, password, keepLoggedIn = false) =>
+  const superAdminLogin = (email, password) =>
     handleLogin({
       endpoint: "/api/v1/superadmin/login",
       email,
       password,
       roleKey: "superadmin",
-      keepLoggedIn,
     });
 
-  const deptLogin = (email, password, keepLoggedIn = false) =>
+  const deptLogin = (email, password) =>
     handleLogin({
       endpoint: "/api/v1/department/login",
       email,
       password,
       roleKey: "department",
       extraStorage: { department: "department" },
-      keepLoggedIn,
     });
 
-  const modLogin = (email, password, keepLoggedIn = false) =>
+  const modLogin = (email, password) =>
     handleLogin({
       endpoint: "/api/v1/moderator/login",
       email,
       password,
       roleKey: "moderator",
-      keepLoggedIn,
     });
 
-  const userLogin = (email, password, keepLoggedIn = false) =>
+  const userLogin = (email, password) =>
     handleLogin({
       endpoint: "/api/v1/user/login",
       email,
       password,
       roleKey: "user",
-      keepLoggedIn,
     });
 
   const logout = () => {
     localStorage.clear();
     sessionStorage.clear();
-    Cookies.remove("token");
-    Cookies.remove("role");
     setIsLogin(false);
     setAuthToken(null);
     setUserRole(null);
   };
 
   useEffect(() => {
-    const token = Cookies.get("token") || sessionStorage.getItem("token");
-    const role = Cookies.get("role") || sessionStorage.getItem("role");
+    const token = sessionStorage.getItem("token");
+    const role = sessionStorage.getItem("role");
     if (token) {
       setIsLogin(true);
       setAuthToken(token);
