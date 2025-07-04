@@ -9,10 +9,10 @@ export default function HiringStatusTable() {
           <Users />
           Hiring Status
         </div>
-        <button className="flex items-center gap-1 text-[#515156] px-2 py-1 text-sm rounded hover:bg-gray-100">
+        {/* <button className="flex items-center gap-1 text-[#515156] px-2 py-1 text-sm rounded hover:bg-gray-100">
           <SlidersHorizontal className="h-4 w-4 text-[#515156]" />
           Filter
-        </button>
+        </button> */}
       </div>
       <div className="overflow-auto px-4 py-2">
         <table className="w-full">
