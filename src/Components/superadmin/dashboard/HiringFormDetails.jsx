@@ -16,12 +16,12 @@ export default function HiringFormDetails() {
 
       {/* Content */}
       <div className="p-4 space-y-4">
-        <div className="flex flex-wrap gap-5 justify-end">
+        <div className="flex flex-wrap gap-5">
         {/* Filters */}
             <Filters />
-              <button className=" bg-black text-white text-lg rounded-md px-4 py-2 hover:bg-gray-800">
+              {/* <button className=" bg-black text-white text-lg rounded-md px-4 py-2 hover:bg-gray-800">
                 Check
-              </button>
+              </button> */}
         </div>
 
         {/* Table */}

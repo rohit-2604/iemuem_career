@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import Filters from "../../Components/common/Filters";
 import SearchBar from "../../Components/common/SearchBar";
 import CreateButton from "../../Components/common/CreateButton";
+import { SlidersHorizontal } from "lucide-react";
 
 const allDepartments = [
   {
@@ -122,6 +123,10 @@ function Forms() {
           <div className="flex-1">
             <SearchBar onSearch={handleSearch} />
           </div>
+          <div className="flex items-center space-x-2">
+        <SlidersHorizontal className="w-5 h-5" />
+        <span className="text-md font-medium">Filter</span>
+      </div>
           <Filters onFilterChange={handleFilterChange} />
           <CreateButton label="Create New Job" url="/superadmin/forms/create-job" />
         </div>
